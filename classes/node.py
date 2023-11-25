@@ -1,10 +1,14 @@
 class Node:
 
+    index = 0
+
     def __init__(self, day: int, 
                  arrive1: bool, arrive2: bool, 
                  ship1: int, ship2: int, 
                  departed1: bool, departed2: bool, 
                  warehouse: int, order: int ):
+        self.index = Node.index
+        Node.index += 1
         self.day = day
         self.arrive1 = arrive1
         self.arrive2 = arrive2
@@ -14,6 +18,11 @@ class Node:
         self.departed2 = departed2
         self.warehouse = warehouse
         self.order = order
+
+        self.penalty_ship1 = 0
+        self.penalty_ship2 = 0
+        self.penalty_extraorder = 0
+        self.storing_cost = 0
 
     
     def __str__(self):

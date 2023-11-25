@@ -1,4 +1,5 @@
 from classes.node import Node 
+from classes.charge import Charge 
 
 
 class GenerateNode:
@@ -24,10 +25,10 @@ class GenerateNode:
 
 
     # генерируем один уровень вершин, то есть получили на вход одну и возвращаем всех возможных ее детей
-    def generate_children(self, node: Node) -> list[Node]:
+    def generate_children(self, node: Node, charge: Charge) -> list[Node]:
 
         # расставляем флаги прибытия и отбытия кораблей
-        def chek_arrive_depart(day: int, day_ship_arrival: int, ship_mass: int) -> (bool, bool):
+        def check_arrive_depart(day: int, day_ship_arrival: int, ship_mass: int) -> (bool, bool):
             arrive, departed = False, False
             if day >= day_ship_arrival:
                 arrive = True
@@ -50,8 +51,8 @@ class GenerateNode:
             return None
         
         # create arrive and departed flags for current day
-        arrive1, departed1 = chek_arrive_depart(day, self.day_ship1_arrival, self.ship1_mass)
-        arrive2, departed2 = chek_arrive_depart(day, self.day_ship2_arrival, self.ship2_mass)
+        arrive1, departed1 = check_arrive_depart(day, self.day_ship1_arrival, self.ship1_mass)
+        arrive2, departed2 = check_arrive_depart(day, self.day_ship2_arrival, self.ship2_mass)
 
         ship1_min, ship1_max = ship_iteration_borders(arrive1, node.ship1, self.ship1_mass)
         ship2_min, ship2_max = ship_iteration_borders(arrive2, node.ship2, self.ship2_mass)
@@ -68,6 +69,7 @@ class GenerateNode:
                                 & (ship2 == node.ship2) 
                                 & (warehouse == node.warehouse)):
                             new_node = Node(day, arrive1, arrive2, ship1, ship2, departed1, departed2, warehouse, order)
+                            charge.cnt_charge(node, new_node) # обновляем затраты в ноде
                             node_lst.append(new_node)
             order += 1
 
