@@ -20,6 +20,21 @@ class tkinterApp(tk.Tk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
+        self.parameters = {key: None for key in ['Amount of days under control',
+                                                 'Number of the first Sunday',
+                                                 'Storing mass at the end',
+                                                 'Ship 1 mass at the end',
+                                                 'Ship 2 mass at the end',
+                                                 'Upper limit for order (penalty if exceeded)',
+                                                 'Day load to ship 1 (lower limit)',
+                                                 'Day load to ship 1 (upper limit)',
+                                                 'Day load to ship 2 (lower limit)',
+                                                 'Day load to ship 2 (upper limit)',
+                                                 'Penalty for ship 1 unloading',
+                                                 'Penalty for ship 2 unloading',
+                                                 'Penalty for extra order',
+                                                 'Storing cost']}
+
         self.frames = {}
 
         for PageLayout in (StartPage, ParametersEntryPage, ManualGamePage):
