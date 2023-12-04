@@ -1,20 +1,15 @@
-HARBOUR STORE MANAGEMENT
-
-The following transportation system is considered. There are stores in the harbour. 
-Products from the stores are ordered and delivered to your warehouse and then loaded to arrived 
-ships. Products are delivered every day except Sundays. 
-
-It is necessary to organise the loading, ordering and storing process (during some time) so that total expenditure is minimal.
-
-There are several business parameters:
-1. Number of days under control
-2. Moments of two ships arrival
-3. Date of Sundays
-4. Required total ships load
-5. Minimal and maximal daily ships load
-6. Penalty for load less than minimal amount (penalty for unload)
-7. Penalty for daily order greater than was fixed
-8. Initial product mass in the store
-9. Storing cost
-
+        The following transportation system is considered. There are stores in the harbour. Products from the stores are ordered and
+delivered to your warehouse and then loaded to arrived ships. Products are delivered every day except Sundays. It is necessary to
+organise the loading, ordering and storing process (during some time) so that total expenditure is minimal.
+        There are several business parameters:
+            - Number of days under control
+            - Moments of two ships arrival
+            - Date of Sundays
+            - Required total ships load
+            - Minimal and maximal daily ships load
+            - Penalty for load less than minimal amount (penalty for unload)
+            - Penalty for daily order greater than was fixed
+            - Initial product mass in the store
+            - Storing cost
+All details are presented in the table below.
 You have to find optimal solution (under different conditions) at least three times.
