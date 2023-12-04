@@ -1,5 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
+from typing import Tuple
+from enter_parameters_page import ParametersEntryPage
+from manual_game_page import ManualGamePage
 
 LARGEFONT = ("Times New Roman", 24, '')
 MIDDLEFONT = ("Times New Roman", 18, '')
@@ -11,34 +14,40 @@ class tkinterApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
-        # creating a container
         container = tk.Frame(self, width=600, height=600)
         container.pack(side="top", fill="both", expand=True)
 
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
-        # initializing frames to an empty array
+        self.parameters = {key: None for key in ['Amount of days under control',
+                                                 'Number of the first Sunday',
+                                                 'Storing mass at the end',
+                                                 'Ship 1 mass at the end',
+                                                 'Ship 2 mass at the end',
+                                                 'Upper limit for order (penalty if exceeded)',
+                                                 'Day load to ship 1 (lower limit)',
+                                                 'Day load to ship 1 (upper limit)',
+                                                 'Day load to ship 2 (lower limit)',
+                                                 'Day load to ship 2 (upper limit)',
+                                                 'Penalty for ship 1 unloading',
+                                                 'Penalty for ship 2 unloading',
+                                                 'Penalty for extra order',
+                                                 'Storing cost']}
+
         self.frames = {}
 
-        # iterating through a tuple consisting
-        # of the different page layouts
-        for F in (StartPage, EnterTheDataPage, Page2):
-            frame = F(container, self)
-
-            # initializing frame of that object from
-            # startpage, page1, page2 respectively with
-            # for loop
-            self.frames[F] = frame
-
+        for PageLayout in (StartPage, ParametersEntryPage, ManualGamePage):
+            # вызываем конструктор каждой из страниц
+            frame = PageLayout(container, self)
+            self.frames[PageLayout] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(StartPage)
 
-    # to display the current frame passed as
-    # parameter
-    def show_frame(self, cont):
-        frame = self.frames[cont]
+    def show_frame(self, frame_to_show):
+        # наверное здесь можно закодить передачу аргументов в новую страницу
+        frame = self.frames[frame_to_show]
         frame.tkraise()
 
 
@@ -81,7 +90,7 @@ class StartPage(tk.Frame):
         enter_the_data = ttk.Button(
             self,
             text="Enter the data",
-            command=lambda: controller.show_frame(EnterTheDataPage)
+            command=lambda: controller.show_frame(ParametersEntryPage)
         )
         enter_the_data.grid(
             row=2,
@@ -91,11 +100,37 @@ class StartPage(tk.Frame):
         )
 
 
-# second window frame page1
 class EnterTheDataPage(tk.Frame):
+#     def check_number(self, entry_text: str):
+#         self.error_label = tk.Label()
+#         try:
+#             number = int(entry_text)
+#             if number < 2 or number > 14:
+#                 self.error_label.config(text="Число должно быть от 2 до 14", fg="red")
+#             else:
+#                 self.error_label.config(text="")
+#         except ValueError:
+#             self.error_label.config(text="Введите корректное число", fg="red")
+#
+#     def on_entry_change(self, *args):
+#         self.check_number(self.days_entry.get())
+#
+#     def __init__(self, parent, controller):
+#         tk.Frame.__init__(self, parent)
+#         label = ttk.Label(self, text="Enter the Data", font=LARGEFONT)
+#         label.grid(row=1, column=1, padx=10, pady=10, sticky='n')
+#
+#         label = ttk.Label(self, text="Enter amount of days under control", font=MIDDLEFONT)
+#         label.grid(row=2, column=1, padx=10, pady=10, sticky='n')
+#
+#         self.days_entry = tk.Entry(self, width=40, state='normal', validate="key",
+#                                    validatecommand=self.on_entry_change)
+#
+#         self.days_entry.grid(row=3, column=1, padx=10, pady=10)
 
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, background='black')
+# amount_of_days = collect_entry_message(days_entry)
+# while amount_of_days:
+#     days_entry = tk.Entry(self, width=40, state='enabled')
 
         # for i in range(12):
         #     for j in range(6):
@@ -167,42 +202,15 @@ class EnterTheDataPage(tk.Frame):
         # # by using grid
         # button1.grid(row=12, column=1, padx=10, pady=10)
 
-        # button to show frame 2 with text
-        # layout2
-        # button2 = ttk.Button(self, text="Page 2",
-        #                      command=lambda: controller.show_frame(Page2))
+# button to show frame 2 with text
+# layout2
+# button2 = ttk.Button(self, text="Page 2",
+#                      command=lambda: controller.show_frame(Page2))
 
-        # putting the button in its place by
-        # using grid
-        # button2.grid(row=2, column=1, padx=10, pady=10)
-
-
-# third window frame page2
-class Page2(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Page 2", font=LARGEFONT)
-        label.grid(row=0, column=4, padx=10, pady=10)
-
-        # button to show frame 2 with text
-        # layout2
-        button1 = ttk.Button(self, text="Page 1",
-                             command=lambda: controller.show_frame(IntroPage))
-
-        # putting the button in its place by
-        # using grid
-        button1.grid(row=1, column=1, padx=10, pady=10)
-
-        # button to show frame 3 with text
-        # layout3
-        button2 = ttk.Button(self, text="Startpage",
-                             command=lambda: controller.show_frame(StartPage))
-
-        # putting the button in its place by
-        # using grid
-        button2.grid(row=2, column=1, padx=10, pady=10)
+# putting the button in its place by
+# using grid
+# button2.grid(row=2, column=1, padx=10, pady=10)
 
 
-# Driver Code
 app = tkinterApp()
 app.mainloop()
