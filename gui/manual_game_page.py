@@ -11,7 +11,7 @@ class ManualGamePage(tk.Frame):
     В конце итерации внутри дня происходит подсчет daily charges и running total charges
     """
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        tk.Frame.__init__(self, parent, background='dark blue', width=600, height=600)
         self.controller = controller
 
         main_label = tk.Label(self, text="Start the game", font=("Verdana", 24))
