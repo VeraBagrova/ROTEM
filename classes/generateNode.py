@@ -12,7 +12,7 @@ class GenerateNode:
     '''
 
     def __init__(self, storing_mass: int, ship1_mass: int, ship2_mass: int, 
-                 max_day: int, day_ship1_arrival: int, day_ship2_arrival):
+                 max_day: int, day_ship1_arrival: int, day_ship2_arrival: int, first_sunday: int):
         self.storing_mass = storing_mass
         self.ship1_mass = ship1_mass
         self.ship2_mass = ship2_mass
@@ -21,6 +21,7 @@ class GenerateNode:
         self.max_day = max_day
         self.day_ship1_arrival = day_ship1_arrival
         self.day_ship2_arrival = day_ship2_arrival
+        self.first_sunday = first_sunday
 
 
 
@@ -58,6 +59,7 @@ class GenerateNode:
         ship2_min, ship2_max = ship_iteration_borders(arrive2, node.ship2, self.ship2_mass)
 
         order = 0
+
         # sum of all products (ships, warehouse) not more than max mass
         while node.warehouse + order + node.ship1 + node.ship2 <= self.max_mass:
             for ship1 in range(ship1_min, ship1_max):
@@ -69,8 +71,12 @@ class GenerateNode:
                                 & (ship2 == node.ship2) 
                                 & (warehouse == node.warehouse)):
                             new_node = Node(day, arrive1, arrive2, ship1, ship2, departed1, departed2, warehouse, order)
-                            charge.cnt_charge(node, new_node) # обновляем затраты в ноде
-                            node_lst.append(new_node)
+                            if charge.check_correct_node(node, new_node):
+                                charge.cnt_charge(node, new_node) # обновляем затраты в ноде
+                                node_lst.append(new_node)
+
+            if (day - self.first_sunday) % 7 == 0: # if today is sunday -> no order
+                break              
             order += 1
 
         return node_lst

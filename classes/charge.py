@@ -45,5 +45,14 @@ class Charge:
             elif child_node.ship2 > self.max_ship2:
                 child_node.penalty_ship2 = self.penalty_ship2 * (child_node.ship2 - self.max_ship2)
 
+    
+    def check_correct_node(self, parent_node: Node, child_node: Node) -> bool:
+        ship1_load = child_node.ship1 - parent_node.ship1
+        ship2_load = child_node.ship2 - parent_node.ship2
+
+        if (ship1_load <= self.max_ship1) and (ship2_load <= self.max_ship2):
+            return True
+        return False
+
         
 
