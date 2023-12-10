@@ -5,10 +5,13 @@ from manual_game_page import ManualGamePage
 even_design_params = {'foreground': 'black', 'background': 'turquoise'}
 odd_design_params = {'background': 'dark blue', 'foreground': 'white'}
 
+width = 2000
+height = 1500
+
 
 class ParametersEntryPage(tk.Frame):
     def __init__(self, parent, app):
-        tk.Frame.__init__(self, parent, background='dark blue', width=600, height=600)
+        tk.Frame.__init__(self, parent, background='dark blue', width=width, height=height)
         self.app = app
 
         main_label = tk.Label(self, text="Enter the game parameters", font=("Verdana", 24))
@@ -27,12 +30,14 @@ class ParametersEntryPage(tk.Frame):
             intro_text = tk.Label(self, design_params, text=text, width=label_width)
             entry = tk.Entry(self, design_params)
             label = tk.Label(self, design_params, text="", fg="red")
+            optimal_solution = tk.Label(self, text="")
 
             intro_text.grid(row=row_number_corrected, column=0, padx=10, pady=5)
             entry.grid(row=row_number_corrected, column=1, padx=10, pady=5)
             label.grid(row=row_number_corrected, column=2, padx=10, pady=5)
+            optimal_solution.grid(row=row_number_corrected + 1, column=2)
 
-            self.app.parameters[text] = [intro_text, entry, label]
+            self.app.parameters[text] = [intro_text, entry, label, optimal_solution]
 
         row_number_submit = (len(self.app.parameters) * 2) + 4
         self.submit_button = tk.Button(self, text="Submit", command=self.submit)

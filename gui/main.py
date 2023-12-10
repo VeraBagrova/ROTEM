@@ -8,13 +8,15 @@ LARGEFONT = ("Times New Roman", 24, '')
 MIDDLEFONT = ("Times New Roman", 18, '')
 SMALLFONT = ("Times New Roman", 12, '')
 
+width = 2000
+height = 1500
 
 class tkinterApp(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
-        container = tk.Frame(self, width=900, height=600)
+        container = tk.Frame(self, width=width, height=height)
         container.pack(side="top", fill="both", expand=True)
 
         container.grid_rowconfigure(0, weight=1)
@@ -53,7 +55,7 @@ class tkinterApp(tk.Tk):
 
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, background='dark blue', width=900, height=600)
+        tk.Frame.__init__(self, parent, background='dark blue', width=width, height=height)
         label = ttk.Label(
             self,
             text="HARBOUR STORE MANAGEMENT",
