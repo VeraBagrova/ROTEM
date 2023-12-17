@@ -20,7 +20,7 @@ class TkinterApp(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-        self.geometry('1200x1800')
+        self.geometry('1400x2200')
         self.resizable(True, True)
         self.container = tk.Frame(self, width=width, height=height)
         self.container.pack(side="top", fill="both", expand=True)

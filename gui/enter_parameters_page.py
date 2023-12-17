@@ -21,7 +21,7 @@ class ParametersEntryPage(tk.Frame):
         tk.Frame.__init__(self, parent, width=width, height=height)
         self.app = app
 
-        main_label = tk.Label(self, text="Enter the game parameters", font=("Verdana", 24))
+        main_label = tk.Label(self, text="Play the game", font=("Verdana", 22))
         main_label.grid(row=1, column=1, padx=10, pady=10, sticky='n')
 
         label_width = 30
@@ -46,7 +46,6 @@ class ParametersEntryPage(tk.Frame):
             )
             parameter.user_entry = tk.Entry(self, design_params)
             if parameter.name == 'first_sunday':
-                print('found sunday 1')
                 parameter.user_entry.insert(0, '3')
             else:
                 parameter.user_entry.insert(0, '7')
