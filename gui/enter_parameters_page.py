@@ -1,9 +1,5 @@
 import tkinter as tk
 
-import sys
-sys.path.append('../')
-
-import classes
 from classes.charge import Charge
 from classes.generateNode import GenerateNode
 from classes.graph import Graph
@@ -39,8 +35,21 @@ class ParametersEntryPage(tk.Frame):
             # во втором row будем показывать оптимальное решение
             # row_number_corrected = (row_number + 2) * 2
             row_number_corrected = (row_number + 2)
-            parameter.intro_text = tk.Label(self, design_params, text=parameter.description, width=label_width)
+            parameter.intro_text = tk.Label(
+                self,
+                design_params,
+                text=parameter.description,
+                width=label_width,
+                anchor="w",
+                wraplength=300,
+                justify="left"
+            )
             parameter.user_entry = tk.Entry(self, design_params)
+            if parameter.name == 'first_sunday':
+                print('found sunday 1')
+                parameter.user_entry.insert(0, '3')
+            else:
+                parameter.user_entry.insert(0, '7')
             parameter.error_label = tk.Label(self, design_params, text="", fg="red")
             parameter.optimal_solution = tk.Label(self, text="")
 
@@ -48,27 +57,6 @@ class ParametersEntryPage(tk.Frame):
             parameter.user_entry.grid(row=row_number_corrected, column=1, padx=10, pady=5)
             parameter.error_label.grid(row=row_number_corrected, column=2, padx=10, pady=5)
             parameter.optimal_solution.grid(row=row_number_corrected + 1, column=2)
-
-        # for row_number, text in enumerate(self.app.parameters.keys()):
-        #     if row_number % 2 == 0:
-        #         design_params = odd_design_params
-        #     else:
-        #         design_params = even_design_params
-        #
-        #     # во втором row будем показывать оптимальное решение
-        #     # row_number_corrected = (row_number + 2) * 2
-        #     row_number_corrected = (row_number + 2)
-        #     intro_text = tk.Label(self, design_params, text=text, width=label_width)
-        #     entry = tk.Entry(self, design_params)
-        #     label = tk.Label(self, design_params, text="", fg="red")
-        #     optimal_solution = tk.Label(self, text="")
-        #
-        #     intro_text.grid(row=row_number_corrected, column=0, padx=10, pady=5)
-        #     entry.grid(row=row_number_corrected, column=1, padx=10, pady=5)
-        #     label.grid(row=row_number_corrected, column=2, padx=10, pady=5)
-        #     optimal_solution.grid(row=row_number_corrected + 1, column=2)
-        #
-        #     self.app.parameters[text] = [intro_text, entry, label, optimal_solution]
 
         # row_number_submit = (len(self.app.parameters) * 2) + 4
         row_number_submit = len(self.app.parameters) + 2
@@ -96,4 +84,13 @@ class ParametersEntryPage(tk.Frame):
             charge = Charge(1, 2, 2, 1, 2, 2, 2, 2, 2)
 
             self.app.graph = Graph.create_from_node(zero_node, generate, charge)
+
+            for PageLayout in [ManualGamePage]:
+
+                frame = PageLayout(self.app.container, self.app)
+                frame.grid(row=0, column=0, sticky='nsew')
+                self.app.frames[PageLayout] = frame
+
             self.app.show_frame(ManualGamePage)
+
+
