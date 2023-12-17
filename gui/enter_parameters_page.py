@@ -1,11 +1,15 @@
 import tkinter as tk
 
+import sys
+sys.path.append('../')
+
+import classes
 from classes.charge import Charge
 from classes.generateNode import GenerateNode
 from classes.graph import Graph
 from classes.node import Node
-from utils import check_input
-from manual_game_page import ManualGamePage
+from gui.utils import check_input
+from gui.manual_game_page import ManualGamePage
 
 # even_design_params = {'foreground': 'black', 'background': 'turquoise'}
 # odd_design_params = {'background': 'dark blue', 'foreground': 'white'}

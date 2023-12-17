@@ -1,9 +1,12 @@
 import tkinter as tk
+import sys
+sys.path.append('../../')
+
 from tkinter import ttk
 from typing import Tuple, List
-from enter_parameters_page import ParametersEntryPage
-from manual_game_page import ManualGamePage
-from utils import GameParameterStorage
+from gui.enter_parameters_page import ParametersEntryPage
+from gui.manual_game_page import ManualGamePage
+from gui.utils import GameParameterStorage
 
 LARGE_FONT = ("Times New Roman", 24, '')
 MIDDLE_FONT = ("Times New Roman", 18, '')
@@ -46,10 +49,11 @@ class TkinterApp(tk.Tk):
 
         self.frames = {}
 
-        for PageLayout in (StartPage, ParametersEntryPage, ManualGamePage):
+        for PageLayout in [StartPage, ParametersEntryPage, ManualGamePage]:
             # вызываем конструктор каждой из страниц
             frame = PageLayout(container, self)
             self.frames[PageLayout] = frame
+            frame.grid(row=0, column=0, sticky='nsew')
 
         self.show_frame(StartPage)
 
