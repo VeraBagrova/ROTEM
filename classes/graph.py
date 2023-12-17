@@ -47,7 +47,7 @@ class Graph:
                         cnt_nodes += 1
                         weight = child.penalty_ship1 + child.penalty_ship2 + child.penalty_extraorder + child.storing_cost
                         # it's for debug
-                        print(f'Parent node\n{nd}\nChild node\n{child}\n')
+                        # print(f'Parent node\n{nd}\nChild node\n{child}\n')
 
                         newNode = [child.index, weight]
                         graph[nd.index].insert(0, newNode)
