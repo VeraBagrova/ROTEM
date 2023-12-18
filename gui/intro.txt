@@ -1,6 +1,7 @@
-        The following transportation system is considered. There are stores in the harbour. Products from the stores are ordered and
-delivered to your warehouse and then loaded to arrived ships. Products are delivered every day except Sundays. It is necessary to
-organise the loading, ordering and storing process (during some time) so that total expenditure is minimal.
+        The following transportation system is considered. There are stores in the harbour. Products from the
+stores are ordered and delivered to your warehouse and then loaded to arrived ships. Products are delivered
+every day except Sundays. It is necessary to organise the loading, ordering and storing process (during some
+time) so that total expenditure is minimal.
         There are several business parameters:
             - Number of days under control
             - Moments of two ships arrival
