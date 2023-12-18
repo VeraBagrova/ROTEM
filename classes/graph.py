@@ -18,16 +18,6 @@ from collections import defaultdict
 
 
 class Graph:
-    zero_node_params = {
-        "day": 0,
-        "arrive1": False,
-        "arrive2": False,
-        "ship1": 0,
-        "ship2": 0,
-        "departed1": False,
-        "departed2": False,
-        "order": 0
-    }
 
     # метод, генерирующий полный граф из нулевой вершины
     @classmethod
@@ -67,8 +57,12 @@ class Graph:
         self.all_nodes = all_nodes
 
 
+    # вернуть ноду из графа или None, если ее не существует
     def node_exist(self, node: Node):
-        return node in self.all_nodes
+        for full_node in self.all_nodes:
+            if node == full_node:
+                return full_node
+        return None
     
 
     def optimalSolution(self, src, dist, parent):
