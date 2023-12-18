@@ -80,14 +80,14 @@ class GameGridColumn:
     def update_totals(self):
         print('updated values')
         if self.previous_col is not None:
-            self.previous_col.entries['day_charges'][0].config(state='normal')
+            self.previous_col.entries['day_charges'][0].config(state='normal', **odd_design_params)
             self.previous_col.entries['day_charges'][0].insert(tk.END, string='new total')
             # тотал пересчитаем на основе previous_node
             self.previous_col.entries['total_charges'][0].insert(tk.END, string=f'totals')
 
     def show_optimum(self):
         for i, entry in enumerate(self.entries.values()):
-            entry[1].config(text='22', background='green1')
+            entry[1].config(text='22', background='green1', foreground='black')
 
 
 class ManualGamePage(tk.Frame):
