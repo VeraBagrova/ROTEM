@@ -12,8 +12,6 @@ yellow_color = 'yellow'
 
 even_design_params = {'foreground': 'black', 'background': 'turquoise'}
 odd_design_params = {'background': blue_color, 'foreground': 'white'}
-# even_design_params = {}
-# odd_design_params = {}
 
 LARGE_FONT = ("Raster Fonts", 24, '')
 MIDDLE_FONT = ("Raster Fonts", 18, '')
@@ -39,8 +37,6 @@ class ParametersEntryPage(tk.Frame):
             else:
                 design_params = even_design_params
 
-            # во втором row будем показывать оптимальное решение
-            # row_number_corrected = (row_number + 2) * 2
             row_number_corrected = (row_number + 2)
             parameter.intro_text = tk.Label(
                 self,
@@ -52,10 +48,79 @@ class ParametersEntryPage(tk.Frame):
                 justify="left"
             )
             parameter.user_entry = tk.Entry(self, design_params, highlightthickness=0)
+            # if parameter.name == 'first_sunday':
+            #     parameter.user_entry.insert(0, '3')
+            # else:
+            #     parameter.user_entry.insert(0, '7')
+            # if parameter.name == 'first_sunday':
+            #     parameter.user_entry.insert(0, '3')
+            # elif parameter.name == 'max_day':
+            #     parameter.user_entry.insert(0, '3')
+            # elif parameter.name == 'day_ship1_arrival':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'day_ship2_arrival':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'warehouse':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'storing_mass':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'ship1_mass':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'ship2_mass':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'max_order':
+            #     parameter.user_entry.insert(0, '2')
+            # elif parameter.name == 'penalty_extraorder':
+            #     parameter.user_entry.insert(0, '2')
+            # elif parameter.name == 'min_ship1':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'max_ship1':
+            #     parameter.user_entry.insert(0, '2')
+            # elif parameter.name == 'min_ship2':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'max_ship2':
+            #     parameter.user_entry.insert(0, '2')
+            # elif parameter.name == 'penalty_ship1':
+            #     parameter.user_entry.insert(0, '2')
+            # elif parameter.name == 'penalty_ship2':
+            #     parameter.user_entry.insert(0, '2')
+            # elif parameter.name == 'storing_cost':
+            #     parameter.user_entry.insert(0, '2')
+
             if parameter.name == 'first_sunday':
                 parameter.user_entry.insert(0, '3')
-            else:
-                parameter.user_entry.insert(0, '7')
+            elif parameter.name == 'max_day':
+                parameter.user_entry.insert(0, '5')
+            elif parameter.name == 'day_ship1_arrival':
+                parameter.user_entry.insert(0, '2')
+            elif parameter.name == 'day_ship2_arrival':
+                parameter.user_entry.insert(0, '3')
+            elif parameter.name == 'warehouse':
+                parameter.user_entry.insert(0, '6')
+            elif parameter.name == 'storing_mass':
+                parameter.user_entry.insert(0, '10')
+            elif parameter.name == 'ship1_mass':
+                parameter.user_entry.insert(0, '6')
+            elif parameter.name == 'ship2_mass':
+                parameter.user_entry.insert(0, '3')
+            elif parameter.name == 'max_order':
+                parameter.user_entry.insert(0, '2')
+            elif parameter.name == 'penalty_extraorder':
+                parameter.user_entry.insert(0, '1')
+            elif parameter.name == 'min_ship1':
+                parameter.user_entry.insert(0, '1')
+            elif parameter.name == 'max_ship1':
+                parameter.user_entry.insert(0, '2')
+            elif parameter.name == 'min_ship2':
+                parameter.user_entry.insert(0, '1')
+            elif parameter.name == 'max_ship2':
+                parameter.user_entry.insert(0, '3')
+            elif parameter.name == 'penalty_ship1':
+                parameter.user_entry.insert(0, '1')
+            elif parameter.name == 'penalty_ship2':
+                parameter.user_entry.insert(0, '3')
+            elif parameter.name == 'storing_cost':
+                parameter.user_entry.insert(0, '2')
             parameter.error_label = tk.Label(self, design_params, width=25, text="Ожидается ввод...", fg=yellow_color)
             parameter.optimal_solution = tk.Label(self, text="")
 
@@ -84,13 +149,39 @@ class ParametersEntryPage(tk.Frame):
         # если все параметры прошли проверку – переходим к игре
         if all(x is not None for x in values):
             zero_node = Node(
+                day=0,
+                arrive1=False,
+                arrive2=False,
+                ship1=0,
+                ship2=0,
+                departed1=False,
+                departed2=False,
                 warehouse=self.app.parameters['warehouse'].final_value,
-                **Graph.zero_node_params
+                order=0
             )
-            generate = GenerateNode(1, 1, 1, 3, 1, 1, 2)
-            charge = Charge(1, 2, 2, 1, 2, 2, 2, 2, 2)
+            generate = GenerateNode(
+                storing_mass=self.app.parameters['storing_mass'].final_value,
+                ship1_mass=self.app.parameters['ship1_mass'].final_value,
+                ship2_mass=self.app.parameters['ship2_mass'].final_value,
+                max_day=self.app.parameters['max_day'].final_value,
+                day_ship1_arrival=self.app.parameters['day_ship1_arrival'].final_value,
+                day_ship2_arrival=self.app.parameters['day_ship2_arrival'].final_value,
+                first_sunday=self.app.parameters['first_sunday'].final_value
+            )
+            charge = Charge(
+                min_ship1=self.app.parameters['min_ship1'].final_value,
+                min_ship2=self.app.parameters['min_ship2'].final_value,
+                penalty_ship1=self.app.parameters['penalty_ship1'].final_value,
+                max_ship1=self.app.parameters['max_ship1'].final_value,
+                max_ship2=self.app.parameters['max_ship2'].final_value,
+                penalty_ship2=self.app.parameters['penalty_ship2'].final_value,
+                max_order=self.app.parameters['max_order'].final_value,
+                penalty_extraorder=self.app.parameters['penalty_extraorder'].final_value,
+                storing_cost=self.app.parameters['storing_cost'].final_value
+            )
 
             self.app.graph = Graph.create_from_node(zero_node, generate, charge)
+            self.app.nodes = [zero_node]
 
             for PageLayout in [ManualGamePage]:
                 frame = PageLayout(self.app.container, self.app)
