@@ -32,6 +32,8 @@ class TkinterApp(tk.Tk):
         params = {
             'max_day': 'Amount of days under control',
             'first_sunday': 'Number of the first Sunday',
+            'day_ship1_arrival': 'Day the first ship arrived',
+            'day_ship2_arrival': 'Day the second ship arrived',
             'warehouse': 'Starting storing mass',
             'storing_mass': 'Storing mass at the end',
             "ship1_mass": 'Ship 1 mass at the end',

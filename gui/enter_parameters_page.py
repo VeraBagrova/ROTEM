@@ -84,13 +84,39 @@ class ParametersEntryPage(tk.Frame):
         # если все параметры прошли проверку – переходим к игре
         if all(x is not None for x in values):
             zero_node = Node(
+                day=0,
+                arrive1=False,
+                arrive2=False,
+                ship1=0,
+                ship2=0,
+                departed1=False,
+                departed2=False,
                 warehouse=self.app.parameters['warehouse'].final_value,
-                **Graph.zero_node_params
+                order=0
             )
-            generate = GenerateNode(1, 1, 1, 3, 1, 1, 2)
-            charge = Charge(1, 2, 2, 1, 2, 2, 2, 2, 2)
+            generate = GenerateNode(
+                storing_mass=self.app['storing_mass'].final_value,
+                ship1_mass=self.app['ship1_mass'].final_value,
+                ship2_mass=self.app['ship2_mass'].final_value,
+                max_day=self.app['max_day'].final_value,
+                day_ship1_arrival=self.app['day_ship1_arrival'].final_value,
+                day_ship2_arrival=self.app['day_ship2_arrival'].final_value,
+                first_sunday=self.app['first_sunday'].final_value
+            )
+            charge = Charge(
+                min_ship1=self.app['min_ship1'].final_value,
+                min_ship2=self.app['min_ship2'].final_value,
+                penalty_ship1=self.app['penalty_ship1'].final_value,
+                max_ship1=self.app['max_ship1'].final_value,
+                max_ship2=self.app['max_ship2'].final_value,
+                penalty_ship2=self.app['penalty_ship2'].final_value,
+                max_order=self.app['max_order'].final_value,
+                penalty_extraorder=self.app['penalty_extraorder'].final_value,
+                storing_cost=self.app['storing_cost'].final_value
+            )
 
             self.app.graph = Graph.create_from_node(zero_node, generate, charge)
+            self.app.nodes = [zero_node]
 
             for PageLayout in [ManualGamePage]:
                 frame = PageLayout(self.app.container, self.app)
