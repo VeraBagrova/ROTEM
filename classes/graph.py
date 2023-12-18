@@ -1,6 +1,7 @@
 from classes.node import Node
 from classes.generateNode import GenerateNode
 from classes.charge import Charge
+from classes.heap import Heap
 from collections import defaultdict
 
 '''
@@ -31,6 +32,7 @@ class Graph:
     # метод, генерирующий полный граф из нулевой вершины
     @classmethod
     def create_from_node(cls, node: Node, generator: GenerateNode, charge: Charge):
+        all_nodes = []
         graph = defaultdict(list)
         list_nodes = [node]  # на каждом шаге генерируем один уровень детей для нод из списка
         cnt_nodes = 1  # счетчик кол-ва вершин
@@ -51,12 +53,99 @@ class Graph:
 
                         newNode = [child.index, weight]
                         graph[nd.index].insert(0, newNode)
+                        all_nodes.append(child)
                     new_list_nodes += child_list
 
             list_nodes = new_list_nodes
 
-        return Graph(cnt_nodes, graph)
+        return Graph(cnt_nodes, graph, all_nodes)
 
-    def __init__(self, V, graph: defaultdict[list]):
+    def __init__(self, V: int, graph: defaultdict[list], all_nodes: [Node]):
         self.V = V
         self.graph = graph
+
+        self.all_nodes = all_nodes
+
+
+    def node_exist(self, node: Node):
+        return node in self.all_nodes
+    
+
+    def optimalSolution(self, src, dist, parent):
+        pass
+
+    
+    def printSolution(self, src, dist, parent):
+            print("Vertex\tDistance\tPath")
+            for i in range(len(dist)):
+                print(f"{src} -> {i}\t{dist[i]}\t\t{self.printPath(i, parent)}")
+
+    def printPath(self, v, parent):
+        if v == -1:
+            return str(v)
+        return self.printPath(parent[v], parent) + ' -> ' + str(v)
+
+    # The main function that calculates distances 
+    # of shortest paths from src to all vertices. 
+    # It is a O(ELogV) function
+    def dijkstra(self, src: Node):
+
+        V = self.V  # Get the number of vertices in graph
+        dist = []   # dist values used to pick minimum 
+                    # weight edge in cut
+        parent = [-1] * V  # Initialize parent array to -1
+ 
+        # minHeap represents set E
+        minHeap = Heap()
+ 
+        #  Initialize min heap with all vertices. 
+        # dist value of all vertices
+        for v in range(V):
+            dist.append(1e7)
+            minHeap.array.append( minHeap.
+                                newMinHeapNode(v, dist[v]))
+            minHeap.pos.append(v)
+ 
+        # Make dist value of src vertex as 0 so 
+        # that it is extracted first
+        minHeap.pos[src] = src
+        dist[src] = 0
+        minHeap.decreaseKey(src, dist[src])
+ 
+        # Initially size of min heap is equal to V
+        minHeap.size = V
+ 
+        # In the following loop, 
+        # min heap contains all nodes
+        # whose shortest distance is not yet finalized.
+        while minHeap.isEmpty() == False:
+ 
+            # Extract the vertex 
+            # with minimum distance value
+            newHeapNode = minHeap.extractMin()
+            u = newHeapNode[0]
+ 
+            # Traverse through all adjacent vertices of 
+            # u (the extracted vertex) and update their 
+            # distance values
+            for pCrawl in self.graph[u]:
+ 
+                v = pCrawl[0]
+ 
+                # If shortest distance to v is not finalized 
+                # yet, and distance to v through u is less 
+                # than its previously calculated distance
+                if (minHeap.isInMinHeap(v) and
+                     dist[u] != 1e7 and \
+                   pCrawl[1] + dist[u] < dist[v]):
+                        dist[v] = pCrawl[1] + dist[u]
+                        parent[v] = u 
+                        # update distance value 
+                        # in min heap also
+                        minHeap.decreaseKey(v, dist[v])
+ 
+        self.printSolution(src, dist, parent)
+
+
+    
+    

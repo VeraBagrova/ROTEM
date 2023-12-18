@@ -21,6 +21,18 @@ class Node:
         self.penalty_ship2 = 0
         self.penalty_extraorder = 0
         self.storing_cost = 0
+        self.final = False
+
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, (Node)):
+            raise TypeError("Операнд справа должен иметь тип Node")
+ 
+        return (self.day == other.day) & (self.arrive1 == other.arrive1) & (self.arrive2 == other.arrive2) \
+            & (self.ship1 == other.ship1) & (self.ship2 == other.ship2) & (self.departed1 == other.departed1) \
+            & (self.departed2 == other.departed2) & (self.warehouse == other.warehouse) \
+            & (self.order == other.order)
+    
 
     def __str__(self):
         st = "day=" + str(self.day) + "\narrive1=" + str(self.arrive1) + "\narrive2=" + str(self.arrive2) + \
