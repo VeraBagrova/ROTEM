@@ -33,7 +33,7 @@ class GameGridColumn:
         self.app = page.app
         self.page = page
         self.day_number = day_number
-        self.previous_col = [page.day_columns[day_number - 2] if len(page.day_columns) > 1 else None][0]
+        self.flag = True
 
         bg_color = 'turquoise'
         fg_color = 'black'
@@ -87,11 +87,13 @@ class GameGridColumn:
         self.entries['ship1_load'][0].config(state='normal', background=yellow_color)
         self.entries['ship2_load'][0].config(state='normal', background=yellow_color)
 
+    def block(self):
+        self.entries['day_order'][0].config(state='readonly', background=yellow_color)
+        self.entries['ship1_load'][0].config(state='readonly', background=yellow_color)
+        self.entries['ship2_load'][0].config(state='readonly', background=yellow_color)
+
     def collect_user_input(self) -> bool:
-        # при инициализации страницы пропускаем итерацию
-        if (self.day_number == 0) and (not self.page.flag):
-            return False
-        # одна нода в графе уже точно есть
+
         previous_node = self.app.nodes[-1]
         print(previous_node)
 
@@ -111,7 +113,7 @@ class GameGridColumn:
         departed2 = (ship2_load == int(self.app.parameters['max_ship2'].final_value))
 
         params = {
-            "day": self.day_number + 1,
+            "day": self.day_number,
             "arrive1": (self.app.parameters['day_ship1_arrival'].final_value < self.day_number),
             "arrive2": (self.app.parameters['day_ship2_arrival'].final_value < self.day_number),
             "ship1": ship1_load,
@@ -126,11 +128,11 @@ class GameGridColumn:
         checked_node = self.app.graph.node_exist(node)
         # либо она None, либо она уже заполнена
         if checked_node:
-            # self.update_totals(checked_node.day_charge)
             # уже посчитанная нода
             print('checked node was correct')
-            self.app.nodes.append(node)
+            self.app.nodes.append(checked_node)
             self.node = checked_node
+            self.update_totals()
             return True
 
         self.page.info_label.config(text='Parameters are non valid! Please, try again')
@@ -138,27 +140,17 @@ class GameGridColumn:
         return False
 
     def calculate_running_total(self, n_days: int) -> int:
-        # result = 0
-        # for node in self.app.nodes:
-        #     result += node.daily_charges
-        return sum(map(lambda node: node.daily_charges, self.app.nodes[:n_days]))
+        return sum(map(lambda node: node.daily_charge, self.app.nodes[:n_days + 1]))
 
     def update_totals(self):
-        if self.previous_col is not None:
-            self.previous_col.entries['day_charges'][0].config(state='normal')
-            self.previous_col.entries['day_charges'][0].insert(tk.END, string=self.node.daily_charge)
+        self.entries['day_charges'][0].config(state='normal')
+        self.entries['day_charges'][0].insert(tk.END, string=self.node.daily_charge)
 
-            # new_total_charges = 0
-            # for i in range(self.day_number):
-            #     new_total_charges += self.app.nodes[i].daily_charges
-            self.previous_col.entries['total_charges'][0].config(state='normal')
-            self.previous_col.entries['total_charges'][0].insert(tk.END,
-                                                                 string=self.calculate_running_total(self.day_number))
+        self.entries['total_charges'][0].config(state='normal')
+        self.entries['total_charges'][0].insert(tk.END, string=str(self.calculate_running_total(self.day_number)))
 
     def show_optimum(self, optimum_node: Node, running_total: int):
 
-        # for i, entry in enumerate(zip(self.entries.values()):
-        #     entry[1].config(text='22')
         design_params = {"background": 'green1'}
 
         self.entries['ship1_mass'][1].config(text=optimum_node.ship1, **design_params)
@@ -200,7 +192,6 @@ class ManualGamePage(tk.Frame):
         self.app = app
         self.n_rows = len(app.parameters)
         self.n_days = self.app.parameters['max_day'].final_value
-        self.flag = False
 
         main_label = tk.Label(self, text="Play the game", font=LARGE_FONT, background=blue_color,
                               foreground=yellow_color)
@@ -211,10 +202,6 @@ class ManualGamePage(tk.Frame):
                                    background='black',
                                    fg='white')
         self.info_label.grid(row=self.n_rows * 2 + 3, columnspan=4)
-
-        # print(self.app.parameters.items())
-        # for key, val in self.app.parameters.items():
-        #     print(key, val.final_value, type(val.final_value))
 
         self.show_parameters()
         self.init_grid()
@@ -259,12 +246,12 @@ class ManualGamePage(tk.Frame):
         n_params = self.n_rows
         print(f'Дней {self.n_rows}, параметров {n_params}')
 
-        for i in range(n_days + 1):
+        for i in range(1, n_days + 1):
             column = GameGridColumn(day_number=i, page=self)
             self.day_columns.append(column)
 
         # ublock the first day
-        self.unblock_next_day()
+        self.day_columns[0].unblock()
         self.continue_button = tk.Button(self,
                                          text="Continue",
                                          command=self.unblock_next_day,
@@ -274,21 +261,15 @@ class ManualGamePage(tk.Frame):
         self.continue_button.grid(row=self.n_rows * 2 + 2, columnspan=4)
 
     def unblock_next_day(self):
-        print()
-        if not self.flag:
-            current_column = self.day_columns[self.current_day]
-            current_column.unblock()
-            self.flag = True
-            return
 
         if (self.current_day < self.n_days) and (self.current_day < len(self.day_columns)):
             current_column = self.day_columns[self.current_day]
-            current_column.unblock()
             user_input_check = current_column.collect_user_input()
 
             if user_input_check:
-                current_column.update_totals()
+                self.day_columns[self.current_day].block()
                 self.current_day += 1
+                self.day_columns[self.current_day].unblock()
 
         else:
             self.show_optimal_solution()
