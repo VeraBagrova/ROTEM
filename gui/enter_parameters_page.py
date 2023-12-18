@@ -95,24 +95,24 @@ class ParametersEntryPage(tk.Frame):
                 order=0
             )
             generate = GenerateNode(
-                storing_mass=self.app['storing_mass'].final_value,
-                ship1_mass=self.app['ship1_mass'].final_value,
-                ship2_mass=self.app['ship2_mass'].final_value,
-                max_day=self.app['max_day'].final_value,
-                day_ship1_arrival=self.app['day_ship1_arrival'].final_value,
-                day_ship2_arrival=self.app['day_ship2_arrival'].final_value,
-                first_sunday=self.app['first_sunday'].final_value
+                storing_mass=self.app.parameters['storing_mass'].final_value,
+                ship1_mass=self.app.parameters['ship1_mass'].final_value,
+                ship2_mass=self.app.parameters['ship2_mass'].final_value,
+                max_day=self.app.parameters['max_day'].final_value,
+                day_ship1_arrival=self.app.parameters['day_ship1_arrival'].final_value,
+                day_ship2_arrival=self.app.parameters['day_ship2_arrival'].final_value,
+                first_sunday=self.app.parameters['first_sunday'].final_value
             )
             charge = Charge(
-                min_ship1=self.app['min_ship1'].final_value,
-                min_ship2=self.app['min_ship2'].final_value,
-                penalty_ship1=self.app['penalty_ship1'].final_value,
-                max_ship1=self.app['max_ship1'].final_value,
-                max_ship2=self.app['max_ship2'].final_value,
-                penalty_ship2=self.app['penalty_ship2'].final_value,
-                max_order=self.app['max_order'].final_value,
-                penalty_extraorder=self.app['penalty_extraorder'].final_value,
-                storing_cost=self.app['storing_cost'].final_value
+                min_ship1=self.app.parameters['min_ship1'].final_value,
+                min_ship2=self.app.parameters['min_ship2'].final_value,
+                penalty_ship1=self.app.parameters['penalty_ship1'].final_value,
+                max_ship1=self.app.parameters['max_ship1'].final_value,
+                max_ship2=self.app.parameters['max_ship2'].final_value,
+                penalty_ship2=self.app.parameters['penalty_ship2'].final_value,
+                max_order=self.app.parameters['max_order'].final_value,
+                penalty_extraorder=self.app.parameters['penalty_extraorder'].final_value,
+                storing_cost=self.app.parameters['storing_cost'].final_value
             )
 
             self.app.graph = Graph.create_from_node(zero_node, generate, charge)

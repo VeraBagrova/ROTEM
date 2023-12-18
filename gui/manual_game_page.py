@@ -2,8 +2,8 @@ import sys
 import tkinter as tk
 from collections import OrderedDict
 
-from classes.graph import Graph
 from classes.node import Node
+from gui.utils import is_valid_input
 
 LARGE_FONT = ("Raster Fonts", 24, '')
 MIDDLE_FONT = ("Raster Fonts", 18, '')
@@ -21,6 +21,9 @@ class GameGridColumn:
         """ В previous_Node будут значения с прошлого дня – будем их использовать для вычислимых ячеек,
         Это или GameGridColumn или нода – надо решить"""
 
+        # будем хранить оптимум тотал чарджа
+        self.node = None
+        self.optimal_total_charge = 0
         self.entries = OrderedDict()
         self.app = page.app
         self.day_number = day_number
@@ -75,56 +78,78 @@ class GameGridColumn:
         ship1_load = self.entries['ship1_load'][0].get()
         ship2_load = self.entries['ship2_load'][0].get()
 
-        if not (day_order.isdigit() and ship1_load.isdigit() and ship2_load.isdigit()):
+        if not (is_valid_input(day_order) and is_valid_input(ship1_load) and is_valid_input(ship2_load)):
+            print('returned false because of non digits')
             return False
 
-        departed1 = (ship1_load == int(self.app.paramters['max_ship1'].final_value))
-        departed2 = (ship2_load == int(self.app.paramters['max_ship2'].final_value))
+        ship1_load = [0 if ship1_load == '' else int(ship1_load)][0]
+        ship2_load = [0 if ship2_load == '' else int(ship2_load)][0]
+        day_order = [0 if day_order == '' else int(day_order)][0]
+
+        departed1 = (ship1_load == int(self.app.parameters['max_ship1'].final_value))
+        departed2 = (ship2_load == int(self.app.parameters['max_ship2'].final_value))
 
         node = Node(
             day=self.day_number,
             arrive1=(int(self.app.parameters['day_ship1_arrival'].final_value) > self.day_number),
             arrive2=(int(self.app.parameters['day_ship2_arrival'].final_value) > self.day_number),
-            ship1=int(ship1_load),
-            ship2=int(ship2_load),
+            ship1=ship1_load,
+            ship2=ship2_load,
             departed1=departed1,
             departed2=departed2,
-            warehouse=previous_node.warehouse + int(day_order) - int(ship1_load) - int(ship2_load) +
-                      int(ship1_load) + int(ship2_load),
-            order=int(day_order)
+            warehouse=previous_node.warehouse + day_order - ship1_load - ship2_load + ship1_load + ship2_load,
+            order=day_order
         )
-        checked_node = self.app.graph.node_exists(node)
+        checked_node = self.app.graph.node_exist(node)
         # либо она None, либо она уже заполнена
         if checked_node:
             # self.update_totals(checked_node.day_charge)
             # уже посчитанная нода
             self.app.nodes.append(checked_node)
+            self.node = checked_node
             return True
+        print('Returned False because this node does not exists')
         return False
 
-    def calculate_running_total(self) -> int:
-        result = 0
-        for i in range(1, len(self.app.nodes)):
-            ### ?????????
-            result += Graph.count_distance(self.app.nodes[i - 1], self.app.nodes[i])
-        return result
+    def calculate_running_total(self, n_days: int) -> int:
+        # result = 0
+        # for node in self.app.nodes:
+        #     result += node.daily_charges
+        return sum(map(lambda node: node.daily_charges, self.app.nodes[:n_days]))
 
-    def update_totals(self, new_day_charges):
+    def update_totals(self):
         print('updated values')
         if self.previous_col is not None:
-            new_total_charges = 10
-
-            # надо добавить обновление penalty
-
             self.previous_col.entries['day_charges'][0].config(state='normal')
-            self.previous_col.entries['day_charges'][0].insert(tk.END, string=new_day_charges)
-            # тотал пересчитаем на основе previous_node
-            self.previous_col.entries['total_charges'][0].config(state='normal')
-            self.previous_col.entries['total_charges'][0].insert(tk.END, string=new_total_charges)
+            self.previous_col.entries['day_charges'][0].insert(tk.END, string=self.node.daily_charge)
 
-    def show_optimum(self):
-        for i, entry in enumerate(self.entries.values()):
-            entry[1].config(text='22')
+            # new_total_charges = 0
+            # for i in range(self.day_number):
+            #     new_total_charges += self.app.nodes[i].daily_charges
+            self.previous_col.entries['total_charges'][0].config(state='normal')
+            self.previous_col.entries['total_charges'][0].insert(tk.END,
+                                                                 string=self.calculate_running_total(self.day_number))
+
+    def show_optimum(self, optimum_node: Node, running_total: int):
+
+        # for i, entry in enumerate(zip(self.entries.values()):
+        #     entry[1].config(text='22')
+
+        self.entries['ship1_mass'][1].config(text=optimum_node.ship1)
+        self.entries['ship2_mass'][1].config(text=optimum_node.ship2)
+        self.entries['day_order'][1].config(text=optimum_node.order)
+
+        self.entries['ship1_load'][1].config(text='')
+        self.entries['ship2_load'][1].config(text='')
+
+        self.entries['pen_ship1_unloading'][1].config(text=optimum_node.penalty_ship1)
+        self.entries['pen_ship2_unloading'][1].config(text=optimum_node.penalty_ship2)
+
+        self.entries['pen_extraorder'][1].config(text=optimum_node.penalty_extraorder)
+        self.entries['storing_cost'][1].config(text=optimum_node.storing_cost)
+
+        self.entries['day_charges'][1].config(text=optimum_node.daily_charge)
+        self.entries['total_charges'][1].config(text=running_total)
 
 
 class ManualGamePage(tk.Frame):
@@ -139,6 +164,7 @@ class ManualGamePage(tk.Frame):
 
     def __init__(self, parent, app):
         tk.Frame.__init__(self, parent, background='black')
+        self.optimum_nodes = []
         self.end_the_game_button = None
         self.continue_button = None
         self.current_day = 0
@@ -189,17 +215,6 @@ class ManualGamePage(tk.Frame):
         for i, label in enumerate(self.labels):
             label.grid(row=i * 2 + 2, column=0, pady=0, padx=0, rowspan=2)
 
-    # def show_days(self):
-    #     for day_number in range(self.n_days):
-    #         color = 'black'
-    #         if (day_number % 7) == self.app.parameters['first_sunday'].final_value:
-    #             print('found sunday 2')
-    #             color = 'red'
-    #         day = tk.Entry(self, fg=color, width=5)
-    #         day.insert(tk.END, string=str(day_number))
-    #         day.config(state="readonly")
-    #         day.grid(row=2, column=day_number + 1, padx=5, pady=5)
-
     def init_grid(self):
 
         n_days = self.n_days
@@ -207,11 +222,10 @@ class ManualGamePage(tk.Frame):
         print(f'Дней {self.n_rows}, параметров {n_params}')
 
         for i in range(n_days):
-            previous_node = None
+            previous_col = None
             if i != 0:
-                previous_node = self.day_columns[-1]
-            print(i + 1, previous_node)
-            column = GameGridColumn(day_number=i + 1, page=self, previous_node=previous_node)
+                previous_col = self.day_columns[-1]
+            column = GameGridColumn(day_number=i + 1, page=self, previous_col=previous_col)
             self.day_columns.append(column)
 
         self.unblock_next_day()
@@ -224,17 +238,26 @@ class ManualGamePage(tk.Frame):
     def unblock_next_day(self):
         if (self.current_day < self.n_days) and (self.current_day < len(self.day_columns)):
             current_column = self.day_columns[self.current_day]
+            print(f'updated current column {self.current_day}')
             current_column.unblock()
+            print(f'unblocked column {self.current_day}')
+
             user_input_check = current_column.collect_user_input()
+            print(f'collected user input {self.current_day}, {user_input_check} check')
+
             if user_input_check:
                 current_column.update_totals()
+                print(f'updated totals {self.current_day}')
+
                 self.current_day += 1
         else:
             self.show_optimal_solution()
             self.end_or_repeat()
 
     def show_optimal_solution(self):
-        for col in self.day_columns:
+        self.optimum_nodes = self.app.graph.optimalSolution()
+        for i, col in enumerate(self.day_columns):
+            col.set_optimum(self.optimum_nodes[i])
             col.show_optimum()
 
     def end_or_repeat(self):

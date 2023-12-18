@@ -38,3 +38,7 @@ def check_input(entry, label):
             return value
     except ValueError:
         label.config(text="Введите корректное число", fg="red")
+
+
+def is_valid_input(string):
+    return string.isdigit() | (string == '')
