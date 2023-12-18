@@ -77,8 +77,8 @@ class GameGridColumn:
                 entry[0].config(**even_design_params_entry)
                 entry[1].config(**even_design_params)
 
-            entry[0].grid(row=i * 2 + 2, column=day_number, padx=1, pady=1)
-            entry[1].grid(row=i * 2 + 3, column=day_number, padx=0, pady=0)
+            entry[0].grid(row=i * 2 + 2, column=day_number + 1, padx=1, pady=1)
+            entry[1].grid(row=i * 2 + 3, column=day_number + 1, padx=0, pady=0)
 
         self.entries['day'][0].config(disabledforeground=fg_color, disabledbackground=bg_color)
 
@@ -88,8 +88,12 @@ class GameGridColumn:
         self.entries['ship2_load'][0].config(state='normal', background=yellow_color)
 
     def collect_user_input(self) -> bool:
+        # при инициализации страницы пропускаем итерацию
+        if (self.day_number == 0) and (not self.page.flag):
+            return False
         # одна нода в графе уже точно есть
         previous_node = self.app.nodes[-1]
+        print(previous_node)
 
         day_order = self.entries['day_order'][0].get()
         ship1_load = self.entries['ship1_load'][0].get()
@@ -99,33 +103,28 @@ class GameGridColumn:
             self.page.info_label.config(text='Parameters are non valid! Please, try again')
             return False
 
+        day_order = [0 if day_order == '' else int(day_order)][0]
         ship1_load = [0 if ship1_load == '' else int(ship1_load)][0]
         ship2_load = [0 if ship2_load == '' else int(ship2_load)][0]
-        day_order = [0 if day_order == '' else int(day_order)][0]
 
         departed1 = (ship1_load == int(self.app.parameters['max_ship1'].final_value))
         departed2 = (ship2_load == int(self.app.parameters['max_ship2'].final_value))
 
         params = {
-            "day" :self.day_number,
-            "arrive1": (int(self.app.parameters['day_ship1_arrival'].final_value) < self.day_number),
-            "arrive2":(int(self.app.parameters['day_ship2_arrival'].final_value) < self.day_number),
+            "day": self.day_number + 1,
+            "arrive1": (self.app.parameters['day_ship1_arrival'].final_value < self.day_number),
+            "arrive2": (self.app.parameters['day_ship2_arrival'].final_value < self.day_number),
             "ship1": ship1_load,
             "ship2": ship2_load,
-            "departed1":departed1,
+            "departed1": departed1,
             "departed2": departed2,
             "warehouse": previous_node.warehouse + day_order - ship1_load - ship2_load + ship1_load + ship2_load,
             "order": day_order
         }
-        if self.day_number > 1:
-            node = Node(**params)
-            print(f'\ncreated node with params {params}')
-        else:
-            node = self.app.nodes[0]
-            print(f'we chose zero node')
-        print(node)
+
+        node = Node(**params)
         checked_node = self.app.graph.node_exist(node)
-         # либо она None, либо она уже заполнена
+        # либо она None, либо она уже заполнена
         if checked_node:
             # self.update_totals(checked_node.day_charge)
             # уже посчитанная нода
@@ -201,6 +200,7 @@ class ManualGamePage(tk.Frame):
         self.app = app
         self.n_rows = len(app.parameters)
         self.n_days = self.app.parameters['max_day'].final_value
+        self.flag = False
 
         main_label = tk.Label(self, text="Play the game", font=LARGE_FONT, background=blue_color,
                               foreground=yellow_color)
@@ -213,8 +213,8 @@ class ManualGamePage(tk.Frame):
         self.info_label.grid(row=self.n_rows * 2 + 3, columnspan=4)
 
         # print(self.app.parameters.items())
-        for key, val in self.app.parameters.items():
-            print(key, val.final_value, type(val.final_value))
+        # for key, val in self.app.parameters.items():
+        #     print(key, val.final_value, type(val.final_value))
 
         self.show_parameters()
         self.init_grid()
@@ -259,33 +259,37 @@ class ManualGamePage(tk.Frame):
         n_params = self.n_rows
         print(f'Дней {self.n_rows}, параметров {n_params}')
 
-        for i in range(n_days):
-            column = GameGridColumn(day_number=i + 1, page=self)
+        for i in range(n_days + 1):
+            column = GameGridColumn(day_number=i, page=self)
             self.day_columns.append(column)
 
         # ublock the first day
         self.unblock_next_day()
-
-        self.continue_button = tk.Button(self, text="Continue", command=self.unblock_next_day, activebackground='black',
+        self.continue_button = tk.Button(self,
+                                         text="Continue",
+                                         command=self.unblock_next_day,
+                                         activebackground='black',
                                          highlightbackground='black',
                                          background='black')
         self.continue_button.grid(row=self.n_rows * 2 + 2, columnspan=4)
 
     def unblock_next_day(self):
+        print()
+        if not self.flag:
+            current_column = self.day_columns[self.current_day]
+            current_column.unblock()
+            self.flag = True
+            return
+
         if (self.current_day < self.n_days) and (self.current_day < len(self.day_columns)):
             current_column = self.day_columns[self.current_day]
-            # print(f'updated current column {self.current_day}')
             current_column.unblock()
-            # print(f'unblocked column {self.current_day}')
-
             user_input_check = current_column.collect_user_input()
-            # print(f'collected user input {self.current_day}, {user_input_check} check')
 
             if user_input_check:
                 current_column.update_totals()
-                # print(f'updated totals {self.current_day}')
-
                 self.current_day += 1
+
         else:
             self.show_optimal_solution()
             self.end_or_repeat()

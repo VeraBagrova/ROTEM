@@ -70,9 +70,9 @@ class Graph:
 
     
     def printSolution(self, src, dist, parent):
-            print("Vertex\tDistance\tPath")
-            for i in range(len(dist)):
-                print(f"{src} -> {i}\t{dist[i]}\t\t{self.printPath(i, parent)}")
+        print("Vertex\tDistance\tPath")
+        for i in range(len(dist)):
+            print(f"{src} -> {i}\t{dist[i]}\t\t{self.printPath(i, parent)}")
 
     def printPath(self, v, parent):
         if v == -1:
