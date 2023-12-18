@@ -20,6 +20,7 @@ even_design_params_entry = {'disabledforeground': 'black', 'disabledbackground':
 odd_design_params_entry = {'disabledbackground': blue_color, 'disabledforeground': 'white', 'state': 'disabled',
                            'relief': 'flat'}
 
+
 class GameGridColumn:
     def __init__(self, day_number: int, page: tk.Frame):
         """ В previous_Node будут значения с прошлого дня – будем их использовать для вычислимых ячеек,
@@ -90,10 +91,26 @@ class GameGridColumn:
         self.entries['ship1_load'][0].config(state='readonly', background=yellow_color)
         self.entries['ship2_load'][0].config(state='readonly', background=yellow_color)
 
+    def clean(self):
+        # очистка колонки
+        for i, dict_item in enumerate(self.entries.items()):
+            key, value = dict_item
+            if key not in ['day_charges', 'total_charges', 'day_order', 'ship1_load', 'ship2_load']:
+                continue
+            design = even_design_params_entry
+            if i % 2 != 0:
+                design = odd_design_params_entry
+
+            value[0].config(state='normal')
+            value[0].delete(0, tk.END)
+            value[0].insert(index=0, string="")
+            value[0].config(**design)
+
+        self.node = None
+
     def collect_user_input(self) -> bool:
 
         previous_node = self.app.nodes[-1]
-        print(previous_node)
 
         day_order = self.entries['day_order'][0].get()
         ship1_load = self.entries['ship1_load'][0].get()
@@ -127,7 +144,6 @@ class GameGridColumn:
         # либо она None, либо она уже заполнена
         if checked_node:
             # уже посчитанная нода
-            print('checked node was correct')
             self.app.nodes.append(checked_node)
             self.node = checked_node
             self.update_totals()
@@ -135,17 +151,51 @@ class GameGridColumn:
 
         self.page.info_label.config(text='Parameters are non valid! Please, try again')
         print('Returned False because this node does not exists')
+        print(node)
         return False
 
     def calculate_running_total(self, n_days: int) -> int:
         return sum(map(lambda node: node.daily_charge, self.app.nodes[:n_days + 1]))
 
     def update_totals(self):
+
+        self.entries['storing_mass'][0].config(state='normal')
+        self.entries['storing_mass'][0].insert(tk.END, string=str(self.node.warehouse))
+        self.entries['storing_mass'][0].config(**odd_design_params_entry)
+
+        if self.day_number > self.app.parameters['day_ship1_arrival'].final_value:
+            self.entries['ship1_mass'][0].config(state='normal')
+            self.entries['ship1_mass'][0].insert(tk.END, string=str(self.node.ship1))
+            self.entries['ship1_mass'][0].config(**even_design_params_entry)
+
+        if self.day_number > self.app.parameters['day_ship2_arrival'].final_value:
+            self.entries['ship2_mass'][0].config(state='normal')
+            self.entries['ship2_mass'][0].insert(tk.END, string=str(self.node.ship1))
+            self.entries['ship2_mass'][0].config(**odd_design_params_entry)
+
+        self.entries['pen_ship1_unloading'][0].config(state='normal')
+        self.entries['pen_ship1_unloading'][0].insert(tk.END, string=str(self.node.penalty_ship1))
+        self.entries['pen_ship1_unloading'][0].config(**odd_design_params_entry)
+
+        self.entries['pen_ship2_unloading'][0].config(state='normal')
+        self.entries['pen_ship2_unloading'][0].insert(tk.END, string=str(self.node.penalty_ship2))
+        self.entries['pen_ship2_unloading'][0].config(**even_design_params_entry)
+
+        self.entries['pen_extraorder'][0].config(state='normal')
+        self.entries['pen_extraorder'][0].insert(tk.END, string=str(self.node.penalty_ship2))
+        self.entries['pen_extraorder'][0].config(**odd_design_params_entry)
+
+        self.entries['storing_cost'][0].config(state='normal')
+        self.entries['storing_cost'][0].insert(tk.END, string=str(self.node.penalty_ship2))
+        self.entries['storing_cost'][0].config(**even_design_params_entry)
+
         self.entries['day_charges'][0].config(state='normal')
         self.entries['day_charges'][0].insert(tk.END, string=self.node.daily_charge)
+        self.entries['day_charges'][0].config(state='readonly')
 
         self.entries['total_charges'][0].config(state='normal')
         self.entries['total_charges'][0].insert(tk.END, string=str(self.calculate_running_total(self.day_number)))
+        self.entries['total_charges'][0].config(state='readonly')
 
     def show_optimum(self, optimum_node: Node, running_total: int):
 
@@ -183,6 +233,7 @@ class ManualGamePage(tk.Frame):
         self.optimum_nodes = []
         self.end_the_game_button = None
         self.continue_button = None
+        self.back_button = None
         self.info_label = None
         self.current_day = 0
         self.labels = []
@@ -258,6 +309,15 @@ class ManualGamePage(tk.Frame):
                                          background='black')
         self.continue_button.grid(row=self.n_rows * 2 + 2, columnspan=4)
 
+        self.back_button = tk.Button(self,
+                                     text="Back",
+                                     command=self.clean_day,
+                                     activebackground='black',
+                                     highlightbackground='black',
+                                     background='black'
+                                     )
+        self.back_button.grid(row=self.n_rows * 2 + 2, columnspan=4, column=4)
+
     def unblock_next_day(self):
 
         if (self.current_day < self.n_days) and (self.current_day < len(self.day_columns)):
@@ -273,16 +333,36 @@ class ManualGamePage(tk.Frame):
             self.show_optimal_solution()
             self.end_or_repeat()
 
+    def clean_day(self):
+        if len(self.app.nodes) == self.current_day + 1:
+            self.app.nodes.pop()
+            self.day_columns[self.current_day].block()
+            self.day_columns[self.current_day - 1].clean()
+            self.day_columns[self.current_day - 1].unblock()
+            print('cleaned the node', self.current_day + 1)
+            self.current_day -= 1
+
     def show_optimal_solution(self):
         self.optimum_nodes = self.app.graph.optimalSolution()
         for i, col in enumerate(self.day_columns):
             col.set_optimum(self.optimum_nodes[i])
             col.show_optimum()
 
+    def start_over(self):
+        for PageLayout in [ManualGamePage]:
+            frame = PageLayout(self.app.container, self.app)
+            frame.grid(row=0, column=0, sticky='nsew')
+            self.app.frames[PageLayout] = frame
+
+        self.app.show_frame(ManualGamePage)
+
     def end_or_repeat(self):
-        self.continue_button.configure(text="Try again")
-        self.end_the_game_button = tk.Button(self, text="End the game", command=lambda: sys.exit(),
+        self.continue_button.configure(text="Try again", command=self.start_over)
+        self.end_the_game_button = tk.Button(self,
+                                             text="End the game",
+                                             command=lambda: sys.exit(),
                                              activebackground='black',
                                              highlightbackground='black',
-                                             background='black')
+                                             background='black'
+                                             )
         self.end_the_game_button.grid(row=self.n_rows * 2 + 2, column=4, columnspan=3)

@@ -57,7 +57,6 @@ class Graph:
 
         self.all_nodes = all_nodes
 
-
     # вернуть ноду из графа или None, если ее не существует
     def node_exist(self, node: Node):
         for full_node in self.all_nodes:
@@ -121,8 +120,7 @@ class Graph:
         #  Initialize min heap with all vertices. 
         # dist value of all vertices
         for v in range(V):
-            minHeap.array.append( minHeap.
-                                newMinHeapNode(v, dist[v]))
+            minHeap.array.append(minHeap.newMinHeapNode(v, dist[v]))
             minHeap.pos.append(v)
  
         # Make dist value of src vertex as 0 so 
@@ -165,7 +163,3 @@ class Graph:
  
         self.printSolution(src, dist, parent)
         return self.optimalSolution(dist, parent)
-
-
-    
-    
