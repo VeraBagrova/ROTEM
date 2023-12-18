@@ -15,6 +15,11 @@ yellow_color = 'yellow'
 even_design_params = {'foreground': 'black', 'background': 'turquoise'}
 odd_design_params = {'background': blue_color, 'foreground': 'white'}
 
+even_design_params_entry = {'disabledforeground': 'black', 'disabledbackground': 'turquoise', 'state': 'disabled',
+                            'relief': 'flat'}
+odd_design_params_entry = {'disabledbackground': blue_color, 'disabledforeground': 'white', 'state': 'disabled',
+                           'relief': 'flat'}
+
 
 class GameGridColumn:
     def __init__(self, day_number: int, page: tk.Frame, previous_col=None):
@@ -29,14 +34,16 @@ class GameGridColumn:
         self.day_number = day_number
         self.previous_col = previous_col
 
-        color = 'black'
+        bg_color = 'turquoise'
+        fg_color = 'black'
         if (day_number % 7) == page.app.parameters['first_sunday'].final_value:
-            color = 'red'
+            fg_color = 'white'
+            bg_color = 'red'
 
         entry_params = {'master': page, 'width': 5, 'highlightthickness': 0}
         label_params = {'master': page, 'width': 5, 'text': "", "fg": "green"}
         # Entry для значения, Label – для оптимального решения
-        self.entries['day'] = [tk.Entry(fg=color, **entry_params), tk.Label(**label_params)]
+        self.entries['day'] = [tk.Entry(**entry_params), tk.Label(**label_params)]
         self.entries['day'][0].insert(tk.END, string=str(day_number))
 
         self.entries['storing_mass'] = [tk.Entry(**entry_params, **odd_design_params), tk.Label(**label_params)]
@@ -61,14 +68,23 @@ class GameGridColumn:
         self.entries['total_charges'] = [tk.Entry(**entry_params), tk.Label(**label_params)]
 
         for i, entry in enumerate(self.entries.values()):
-            entry[0].config(state="readonly")
-            entry[0].grid(row=i * 2 + 2, column=day_number, padx=0, pady=0)
+
+            if i % 2 != 0:
+                entry[0].config(**odd_design_params_entry)
+                entry[1].config(**odd_design_params)
+            else:
+                entry[0].config(**even_design_params_entry)
+                entry[1].config(**even_design_params)
+
+            entry[0].grid(row=i * 2 + 2, column=day_number, padx=1, pady=1)
             entry[1].grid(row=i * 2 + 3, column=day_number, padx=0, pady=0)
 
+        self.entries['day'][0].config(disabledforeground=fg_color, disabledbackground=bg_color)
+
     def unblock(self):
-        self.entries['day_order'][0].config(state='normal')
-        self.entries['ship1_load'][0].config(state='normal')
-        self.entries['ship2_load'][0].config(state='normal')
+        self.entries['day_order'][0].config(state='normal', background=yellow_color)
+        self.entries['ship1_load'][0].config(state='normal', background=yellow_color)
+        self.entries['ship2_load'][0].config(state='normal', background=yellow_color)
 
     def collect_user_input(self) -> bool:
         # одна нода в графе уже точно есть
@@ -134,22 +150,23 @@ class GameGridColumn:
 
         # for i, entry in enumerate(zip(self.entries.values()):
         #     entry[1].config(text='22')
+        design_params = {"background": 'green1'}
 
-        self.entries['ship1_mass'][1].config(text=optimum_node.ship1)
-        self.entries['ship2_mass'][1].config(text=optimum_node.ship2)
-        self.entries['day_order'][1].config(text=optimum_node.order)
+        self.entries['ship1_mass'][1].config(text=optimum_node.ship1, **design_params)
+        self.entries['ship2_mass'][1].config(text=optimum_node.ship2, **design_params)
+        self.entries['day_order'][1].config(text=optimum_node.order, **design_params)
 
-        self.entries['ship1_load'][1].config(text='')
-        self.entries['ship2_load'][1].config(text='')
+        self.entries['ship1_load'][1].config(text='', **design_params)
+        self.entries['ship2_load'][1].config(text='', **design_params)
 
-        self.entries['pen_ship1_unloading'][1].config(text=optimum_node.penalty_ship1)
-        self.entries['pen_ship2_unloading'][1].config(text=optimum_node.penalty_ship2)
+        self.entries['pen_ship1_unloading'][1].config(text=optimum_node.penalty_ship1, **design_params)
+        self.entries['pen_ship2_unloading'][1].config(text=optimum_node.penalty_ship2, **design_params)
 
-        self.entries['pen_extraorder'][1].config(text=optimum_node.penalty_extraorder)
-        self.entries['storing_cost'][1].config(text=optimum_node.storing_cost)
+        self.entries['pen_extraorder'][1].config(text=optimum_node.penalty_extraorder, **design_params)
+        self.entries['storing_cost'][1].config(text=optimum_node.storing_cost, **design_params)
 
-        self.entries['day_charges'][1].config(text=optimum_node.daily_charge)
-        self.entries['total_charges'][1].config(text=running_total)
+        self.entries['day_charges'][1].config(text=optimum_node.daily_charge, **design_params)
+        self.entries['total_charges'][1].config(text=running_total, **design_params)
 
 
 class ManualGamePage(tk.Frame):
@@ -174,9 +191,8 @@ class ManualGamePage(tk.Frame):
         self.n_rows = len(app.parameters)
         self.n_days = self.app.parameters['max_day'].final_value
 
-        main_label = tk.Label(self, text="Play the game", width=50, font=LARGE_FONT, background=blue_color,
-                              foreground=yellow_color)
-        main_label.grid(row=1, column=0, sticky='n', columnspan=10)
+        main_label = tk.Label(self, text="Play the game", font=LARGE_FONT, background=blue_color, foreground=yellow_color)
+        main_label.grid(row=1, column=0, sticky='we', columnspan=8)
 
         self.show_parameters()
         self.init_grid()
@@ -213,7 +229,7 @@ class ManualGamePage(tk.Frame):
         self.n_rows = len(self.labels)
 
         for i, label in enumerate(self.labels):
-            label.grid(row=i * 2 + 2, column=0, pady=0, padx=0, rowspan=2)
+            label.grid(row=i * 2 + 2, column=0, pady=1, padx=1, rowspan=2, sticky='ns')
 
     def init_grid(self):
 
@@ -231,9 +247,9 @@ class ManualGamePage(tk.Frame):
         self.unblock_next_day()
 
         self.continue_button = tk.Button(self, text="Continue", command=self.unblock_next_day, activebackground='black',
-                                         highlightbackground='black',
-                                         background='black')
-        self.continue_button.grid(row=self.n_rows * 2 + 2, columnspan=100)
+                                       highlightbackground='black',
+                                       background='black')
+        self.continue_button.grid(row=self.n_rows * 2 + 2, columnspan=4)
 
     def unblock_next_day(self):
         if (self.current_day < self.n_days) and (self.current_day < len(self.day_columns)):
@@ -262,8 +278,7 @@ class ManualGamePage(tk.Frame):
 
     def end_or_repeat(self):
         self.continue_button.configure(text="Try again")
-        self.end_the_game_button = tk.Button(self, text="End the game", command=lambda: sys.exit(),
-                                             activebackground='black',
-                                             highlightbackground='black',
-                                             background='black')
-        self.end_the_game_button.grid(row=self.n_rows * 2 + 2, column=4, columnspan=100)
+        self.end_the_game_button = tk.Button(self, text="End the game", command=lambda: sys.exit(), activebackground='black',
+                                       highlightbackground='black',
+                                       background='black')
+        self.end_the_game_button.grid(row=self.n_rows * 2 + 2, column=4, columnspan=3)
