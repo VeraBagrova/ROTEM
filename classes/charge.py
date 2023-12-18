@@ -45,6 +45,8 @@ class Charge:
             elif child_node.ship2 > self.max_ship2:
                 child_node.penalty_ship2 = self.penalty_ship2 * (child_node.ship2 - self.max_ship2)
 
+        child_node.daily_charge = child_node.penalty_ship1 + child_node.penalty_ship2 + child_node.storing_cost + child_node.penalty_extraorder
+
     def check_correct_node(self, parent_node: Node, child_node: Node) -> bool:
         ship1_load = child_node.ship1 - parent_node.ship1
         ship2_load = child_node.ship2 - parent_node.ship2

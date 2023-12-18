@@ -1,12 +1,10 @@
 class Node:
-    index = 0
     def __init__(self, day: int,
                  arrive1: bool, arrive2: bool,
                  ship1: int, ship2: int,
                  departed1: bool, departed2: bool,
                  warehouse: int, order: int) -> object:
-        self.index = Node.index
-        Node.index += 1
+        self.index = 0
         self.day = day
         self.arrive1 = arrive1
         self.arrive2 = arrive2
@@ -21,6 +19,7 @@ class Node:
         self.penalty_ship2 = 0
         self.penalty_extraorder = 0
         self.storing_cost = 0
+        self.daily_charge = 0
         self.final = False
 
 

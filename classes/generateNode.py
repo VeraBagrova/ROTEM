@@ -28,7 +28,7 @@ class GenerateNode:
         # расставляем флаги прибытия и отбытия кораблей
         def check_arrive_depart(day: int, day_ship_arrival: int, ship_mass: int) -> (bool, bool):
             arrive, departed = False, False
-            if day >= day_ship_arrival:
+            if day > day_ship_arrival:
                 arrive = True
             if node.ship1 == ship_mass:
                 departed = True
