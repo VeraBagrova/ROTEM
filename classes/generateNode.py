@@ -55,25 +55,37 @@ class GenerateNode:
         ship1_min, ship1_max = ship_iteration_borders(arrive1, node.ship1, self.ship1_mass)
         ship2_min, ship2_max = ship_iteration_borders(arrive2, node.ship2, self.ship2_mass)
 
-        order = 0
+        #  если сегодня последний день, то корабли должны быть отправлены и склад заполнен
+        if day == self.max_day:
+            warehouse = self.storing_mass
+            ship1 = self.ship1_mass
+            ship2 = self.ship2_mass
+            order = warehouse + ship1 + ship2 - node.warehouse - node.ship1 - node.ship2
+            new_node = Node(day, arrive1, arrive2, node.ship1, node.ship2, departed1, departed2, warehouse, order)
+            if charge.check_correct_node(node, new_node):
+                charge.cnt_charge(node, new_node)  # обновляем затраты в ноде
+                new_node.final = True
+                node_lst.append(new_node)
 
-        # sum of all products (ships, warehouse) not more than max mass
-        while node.warehouse + order + node.ship1 + node.ship2 <= self.max_mass:
-            for ship1 in range(ship1_min, ship1_max):
-                for ship2 in range(ship2_min, ship2_max):
-                    # cnt new warehouse
-                    warehouse = node.warehouse + order - ship1 - ship2 + node.ship1 + node.ship2
-                    if warehouse >= 0:
-                        if not ((ship1 == node.ship1)
-                                & (ship2 == node.ship2)
-                                & (warehouse == node.warehouse)):
-                            new_node = Node(day, arrive1, arrive2, ship1, ship2, departed1, departed2, warehouse, order)
-                            if charge.check_correct_node(node, new_node):
-                                charge.cnt_charge(node, new_node)  # обновляем затраты в ноде
-                                node_lst.append(new_node)
+        else:
+            order = 0
+            # sum of all products (ships, warehouse) not more than max mass
+            while node.warehouse + order + node.ship1 + node.ship2 <= self.max_mass:
+                for ship1 in range(ship1_min, ship1_max):
+                    for ship2 in range(ship2_min, ship2_max):
+                        # cnt new warehouse
+                        warehouse = node.warehouse + order - ship1 - ship2 + node.ship1 + node.ship2
+                        if warehouse >= 0:
+                            if not ((ship1 == node.ship1)
+                                    & (ship2 == node.ship2)
+                                    & (warehouse == node.warehouse)):
+                                new_node = Node(day, arrive1, arrive2, ship1, ship2, departed1, departed2, warehouse, order)
+                                if charge.check_correct_node(node, new_node):
+                                    charge.cnt_charge(node, new_node)  # обновляем затраты в ноде
+                                    node_lst.append(new_node)
 
-            if (day - self.first_sunday) % 7 == 0:  # if today is sunday -> no order
-                break
-            order += 1
+                if (day - self.first_sunday) % 7 == 0:  # if today is sunday -> no order
+                    break
+                order += 1
 
         return node_lst
