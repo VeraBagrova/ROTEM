@@ -36,8 +36,10 @@ charge = Charge(min_ship1=1,
 #     print()
 
 graph = Graph.create_from_node(zero_node, generate, charge)
-graph.dijkstra(zero_node.index)
+res = graph.dijkstra(zero_node.index)
 
-
+for r in res:
+    print(r)
+    print()
 
 

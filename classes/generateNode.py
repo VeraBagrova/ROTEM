@@ -61,7 +61,7 @@ class GenerateNode:
             ship1 = self.ship1_mass
             ship2 = self.ship2_mass
             order = warehouse + ship1 + ship2 - node.warehouse - node.ship1 - node.ship2
-            new_node = Node(day, arrive1, arrive2, node.ship1, node.ship2, departed1, departed2, warehouse, order)
+            new_node = Node(day, arrive1, arrive2, ship1, ship2, departed1, departed2, warehouse, order)
             if charge.check_correct_node(node, new_node):
                 charge.cnt_charge(node, new_node)  # обновляем затраты в ноде
                 new_node.final = True

@@ -20,7 +20,6 @@ even_design_params_entry = {'disabledforeground': 'black', 'disabledbackground':
 odd_design_params_entry = {'disabledbackground': blue_color, 'disabledforeground': 'white', 'state': 'disabled',
                            'relief': 'flat'}
 
-
 class GameGridColumn:
     def __init__(self, day_number: int, page: tk.Frame):
         """ В previous_Node будут значения с прошлого дня – будем их использовать для вычислимых ячеек,
@@ -33,7 +32,6 @@ class GameGridColumn:
         self.app = page.app
         self.page = page
         self.day_number = day_number
-        self.flag = True
 
         bg_color = 'turquoise'
         fg_color = 'black'
