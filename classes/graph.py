@@ -22,7 +22,7 @@ class Graph:
     # метод, генерирующий полный граф из нулевой вершины
     @classmethod
     def create_from_node(cls, node: Node, generator: GenerateNode, charge: Charge):
-        all_nodes = []
+        all_nodes = [node]
         graph = defaultdict(list)
         list_nodes = [node]  # на каждом шаге генерируем один уровень детей для нод из списка
         cnt_nodes = 1  # счетчик кол-ва вершин
@@ -36,6 +36,7 @@ class Graph:
                 # если дети есть, то записываем их в dict[индекс родителя] = [[индекс ребенка, вес], ...]
                 if child_list is not None:
                     for child in child_list:
+                        child.index = cnt_nodes
                         cnt_nodes += 1
                         weight = child.penalty_ship1 + child.penalty_ship2 + child.penalty_extraorder + child.storing_cost
                         # it's for debug
@@ -65,8 +66,33 @@ class Graph:
         return None
     
 
-    def optimalSolution(self, src, dist, parent):
-        pass
+    def find_node_by_index(self, ind: int) -> Node:
+        for node in self.all_nodes:
+            if node.index == ind:
+                return node
+            
+
+    def find_path(self, v, parent, lst_ind) -> list:
+        if parent[v] == -1:
+            return lst_ind[::-1]
+        
+        lst_ind.append(parent[v])
+        return self.find_path(parent[v], parent, lst_ind)
+    
+
+    def optimalSolution(self, dist, parent):
+        dist_dict = {}
+        for i in range(len(dist)):
+            distance = dist[i]
+            node = self.find_node_by_index(i)
+            if node.final:
+                dist_dict[i] = distance
+        
+        optimal_final_ind = max(dist_dict, key=dist_dict.get)
+        lst_ind = self.find_path(optimal_final_ind, parent, [optimal_final_ind])
+        lst_nodes = [self.find_node_by_index(ind) for ind in lst_ind]
+
+        return lst_nodes
 
     
     def printSolution(self, src, dist, parent):
@@ -85,7 +111,7 @@ class Graph:
     def dijkstra(self, src: Node):
 
         V = self.V  # Get the number of vertices in graph
-        dist = []   # dist values used to pick minimum 
+        dist = [float('inf')] * V   # dist values used to pick minimum 
                     # weight edge in cut
         parent = [-1] * V  # Initialize parent array to -1
  
@@ -95,7 +121,6 @@ class Graph:
         #  Initialize min heap with all vertices. 
         # dist value of all vertices
         for v in range(V):
-            dist.append(1e7)
             minHeap.array.append( minHeap.
                                 newMinHeapNode(v, dist[v]))
             minHeap.pos.append(v)
@@ -130,7 +155,7 @@ class Graph:
                 # yet, and distance to v through u is less 
                 # than its previously calculated distance
                 if (minHeap.isInMinHeap(v) and
-                     dist[u] != 1e7 and \
+                     dist[u] != float('inf') and \
                    pCrawl[1] + dist[u] < dist[v]):
                         dist[v] = pCrawl[1] + dist[u]
                         parent[v] = u 
@@ -139,6 +164,7 @@ class Graph:
                         minHeap.decreaseKey(v, dist[v])
  
         self.printSolution(src, dist, parent)
+        return self.optimalSolution(dist, parent)
 
 
     
