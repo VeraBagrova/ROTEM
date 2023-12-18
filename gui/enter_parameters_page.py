@@ -12,8 +12,6 @@ yellow_color = 'yellow'
 
 even_design_params = {'foreground': 'black', 'background': 'turquoise'}
 odd_design_params = {'background': blue_color, 'foreground': 'white'}
-# even_design_params = {}
-# odd_design_params = {}
 
 LARGE_FONT = ("Raster Fonts", 24, '')
 MIDDLE_FONT = ("Raster Fonts", 18, '')
@@ -39,8 +37,6 @@ class ParametersEntryPage(tk.Frame):
             else:
                 design_params = even_design_params
 
-            # во втором row будем показывать оптимальное решение
-            # row_number_corrected = (row_number + 2) * 2
             row_number_corrected = (row_number + 2)
             parameter.intro_text = tk.Label(
                 self,
@@ -52,10 +48,79 @@ class ParametersEntryPage(tk.Frame):
                 justify="left"
             )
             parameter.user_entry = tk.Entry(self, design_params, highlightthickness=0)
+            # if parameter.name == 'first_sunday':
+            #     parameter.user_entry.insert(0, '3')
+            # else:
+            #     parameter.user_entry.insert(0, '7')
+            # if parameter.name == 'first_sunday':
+            #     parameter.user_entry.insert(0, '3')
+            # elif parameter.name == 'max_day':
+            #     parameter.user_entry.insert(0, '3')
+            # elif parameter.name == 'day_ship1_arrival':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'day_ship2_arrival':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'warehouse':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'storing_mass':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'ship1_mass':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'ship2_mass':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'max_order':
+            #     parameter.user_entry.insert(0, '2')
+            # elif parameter.name == 'penalty_extraorder':
+            #     parameter.user_entry.insert(0, '2')
+            # elif parameter.name == 'min_ship1':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'max_ship1':
+            #     parameter.user_entry.insert(0, '2')
+            # elif parameter.name == 'min_ship2':
+            #     parameter.user_entry.insert(0, '1')
+            # elif parameter.name == 'max_ship2':
+            #     parameter.user_entry.insert(0, '2')
+            # elif parameter.name == 'penalty_ship1':
+            #     parameter.user_entry.insert(0, '2')
+            # elif parameter.name == 'penalty_ship2':
+            #     parameter.user_entry.insert(0, '2')
+            # elif parameter.name == 'storing_cost':
+            #     parameter.user_entry.insert(0, '2')
+
             if parameter.name == 'first_sunday':
                 parameter.user_entry.insert(0, '3')
-            else:
-                parameter.user_entry.insert(0, '7')
+            elif parameter.name == 'max_day':
+                parameter.user_entry.insert(0, '5')
+            elif parameter.name == 'day_ship1_arrival':
+                parameter.user_entry.insert(0, '2')
+            elif parameter.name == 'day_ship2_arrival':
+                parameter.user_entry.insert(0, '3')
+            elif parameter.name == 'warehouse':
+                parameter.user_entry.insert(0, '6')
+            elif parameter.name == 'storing_mass':
+                parameter.user_entry.insert(0, '10')
+            elif parameter.name == 'ship1_mass':
+                parameter.user_entry.insert(0, '6')
+            elif parameter.name == 'ship2_mass':
+                parameter.user_entry.insert(0, '3')
+            elif parameter.name == 'max_order':
+                parameter.user_entry.insert(0, '2')
+            elif parameter.name == 'penalty_extraorder':
+                parameter.user_entry.insert(0, '1')
+            elif parameter.name == 'min_ship1':
+                parameter.user_entry.insert(0, '1')
+            elif parameter.name == 'max_ship1':
+                parameter.user_entry.insert(0, '2')
+            elif parameter.name == 'min_ship2':
+                parameter.user_entry.insert(0, '1')
+            elif parameter.name == 'max_ship2':
+                parameter.user_entry.insert(0, '3')
+            elif parameter.name == 'penalty_ship1':
+                parameter.user_entry.insert(0, '1')
+            elif parameter.name == 'penalty_ship2':
+                parameter.user_entry.insert(0, '3')
+            elif parameter.name == 'storing_cost':
+                parameter.user_entry.insert(0, '2')
             parameter.error_label = tk.Label(self, design_params, width=25, text="Ожидается ввод...", fg=yellow_color)
             parameter.optimal_solution = tk.Label(self, text="")
 
