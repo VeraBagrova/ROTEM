@@ -7,22 +7,29 @@ from classes.node import Node
 from gui.utils import check_input
 from gui.manual_game_page import ManualGamePage
 
-# even_design_params = {'foreground': 'black', 'background': 'turquoise'}
-# odd_design_params = {'background': 'dark blue', 'foreground': 'white'}
-even_design_params = {}
-odd_design_params = {}
+blue_color = 'blue3'
+yellow_color = 'yellow'
 
-width = 2000
-height = 1500
+even_design_params = {'foreground': 'black', 'background': 'turquoise'}
+odd_design_params = {'background': blue_color, 'foreground': 'white'}
+# even_design_params = {}
+# odd_design_params = {}
+
+LARGE_FONT = ("Raster Fonts", 24, '')
+MIDDLE_FONT = ("Raster Fonts", 18, '')
+SMALL_FONT = ("Raster Fonts", 12, '')
+
+width = 200
+height = 150
 
 
 class ParametersEntryPage(tk.Frame):
     def __init__(self, parent, app):
-        tk.Frame.__init__(self, parent, width=width, height=height)
+        tk.Frame.__init__(self, parent, background='black')
         self.app = app
 
-        main_label = tk.Label(self, text="Play the game", font=("Verdana", 22))
-        main_label.grid(row=1, column=1, padx=10, pady=10, sticky='n')
+        main_label = tk.Label(self, text="Play the game", font=LARGE_FONT, fg=yellow_color, bg=blue_color)
+        main_label.grid(row=0, column=0, sticky='we', columnspan=3)
 
         label_width = 30
 
@@ -44,22 +51,23 @@ class ParametersEntryPage(tk.Frame):
                 wraplength=300,
                 justify="left"
             )
-            parameter.user_entry = tk.Entry(self, design_params)
+            parameter.user_entry = tk.Entry(self, design_params, highlightthickness=0)
             if parameter.name == 'first_sunday':
                 parameter.user_entry.insert(0, '3')
             else:
                 parameter.user_entry.insert(0, '7')
-            parameter.error_label = tk.Label(self, design_params, text="", fg="red")
+            parameter.error_label = tk.Label(self, design_params, width=25, text="Ожидается ввод...", fg=yellow_color)
             parameter.optimal_solution = tk.Label(self, text="")
 
-            parameter.intro_text.grid(row=row_number_corrected, column=0, padx=10, pady=5)
-            parameter.user_entry.grid(row=row_number_corrected, column=1, padx=10, pady=5)
-            parameter.error_label.grid(row=row_number_corrected, column=2, padx=10, pady=5)
-            parameter.optimal_solution.grid(row=row_number_corrected + 1, column=2)
+            parameter.intro_text.grid(row=row_number_corrected, column=0, padx=1, pady=1)
+            parameter.user_entry.grid(row=row_number_corrected, column=1, padx=1, pady=1)
+            parameter.error_label.grid(row=row_number_corrected, column=2, padx=1, pady=1)
 
         # row_number_submit = (len(self.app.parameters) * 2) + 4
         row_number_submit = len(self.app.parameters) + 2
-        self.submit_button = tk.Button(self, text="Submit", command=self.submit)
+        self.submit_button = tk.Button(self, text="Submit", command=self.submit, activebackground='black',
+                                       highlightbackground='black',
+                                       background='black')
         self.submit_button.grid(row=row_number_submit, columnspan=3)
 
     def submit(self):
@@ -85,11 +93,8 @@ class ParametersEntryPage(tk.Frame):
             self.app.graph = Graph.create_from_node(zero_node, generate, charge)
 
             for PageLayout in [ManualGamePage]:
-
                 frame = PageLayout(self.app.container, self.app)
                 frame.grid(row=0, column=0, sticky='nsew')
                 self.app.frames[PageLayout] = frame
 
             self.app.show_frame(ManualGamePage)
-
-

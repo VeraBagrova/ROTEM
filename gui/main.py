@@ -5,24 +5,25 @@ sys.path.append('../../')
 from tkinter import ttk
 from typing import Tuple, List
 from gui.enter_parameters_page import ParametersEntryPage
-from gui.manual_game_page import ManualGamePage
 from gui.utils import GameParameterStorage
 
-LARGE_FONT = ("Times New Roman", 24, '')
-MIDDLE_FONT = ("Times New Roman", 18, '')
-SMALL_FONT = ("Times New Roman", 12, '')
+LARGE_FONT = ("Raster Fonts", 24, '')
+MIDDLE_FONT = ("Raster Fonts", 18, '')
+SMALL_FONT = ("Raster Fonts", 12, '')
 
 width = 2000
 height = 1500
 
+blue_color = 'blue3'
+yellow_color = 'yellow'
 
 class TkinterApp(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-        self.geometry('1400x2200')
+        self.geometry('700x850+400+100')
         self.resizable(True, True)
-        self.container = tk.Frame(self, width=width, height=height)
+        self.container = tk.Frame(self)
         self.container.pack(side="top", fill="both", expand=True)
 
         self.container.grid_rowconfigure(0, weight=1)
@@ -68,32 +69,30 @@ class TkinterApp(tk.Tk):
 
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, width=width, height=height)
-        label = ttk.Label(
+        tk.Frame.__init__(self, parent, background=blue_color)
+        label = tk.Label(
             self,
             text="HARBOUR STORE MANAGEMENT",
             font=LARGE_FONT,
-            # foreground='yellow',
-            # background='dark blue'
+            foreground=yellow_color,
+            background=blue_color,
         )
         label.grid(
             row=0,
             column=0,
-            padx=10,
-            pady=10,
-            columnspan=2,
         )
 
         with open('gui/intro.txt', 'r') as file:
             intro = file.read()
 
-        intro_label = ttk.Label(
+        intro_label = tk.Label(
             self,
             text=intro,
             font=SMALL_FONT,
-            width=100,
-            # foreground='yellow',
-            # background='dark blue'
+            foreground=yellow_color,
+            background=blue_color,
+            anchor='w',
+            justify='left'
         )
         intro_label.grid(
             row=1,
@@ -102,16 +101,17 @@ class StartPage(tk.Frame):
             pady=10,
         )
 
-        enter_the_data = ttk.Button(
+        enter_the_data = tk.Button(
             self,
             text="Enter the data",
-            command=lambda: controller.show_frame(ParametersEntryPage)
+            command=lambda: controller.show_frame(ParametersEntryPage),
+            activebackground=blue_color,
+            highlightbackground=blue_color,
+            background=blue_color,
         )
         enter_the_data.grid(
             row=2,
             column=0,
-            padx=10,
-            pady=10
         )
 
 
