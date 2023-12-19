@@ -222,16 +222,18 @@ class GameGridColumn:
         self.entries['total_charges'][0].insert(tk.END, string=str(self.calculate_running_total(self.day_number)))
         self.entries['total_charges'][0].config(state='readonly')
 
-    def show_optimum(self, optimum_node: Node, running_total: int):
+    def show_optimum(self, optimum_node: Node, running_total: int, ship1_load: int, ship2_load: int):
 
-        design_params = {"background": 'green1'}
+        design_params = {"background": 'green1', "foreground": 'black'}
+
+        self.entries['storing_mass'][1].config(text=optimum_node.warehouse, **design_params)
+
+        self.entries['ship1_load'][1].config(text=ship1_load, **design_params)
+        self.entries['ship2_load'][1].config(text=ship2_load, **design_params)
 
         self.entries['ship1_mass'][1].config(text=optimum_node.ship1, **design_params)
         self.entries['ship2_mass'][1].config(text=optimum_node.ship2, **design_params)
         self.entries['day_order'][1].config(text=optimum_node.order, **design_params)
-
-        self.entries['ship1_load'][1].config(text='', **design_params)
-        self.entries['ship2_load'][1].config(text='', **design_params)
 
         self.entries['pen_ship1_unloading'][1].config(text=optimum_node.penalty_ship1, **design_params)
         self.entries['pen_ship2_unloading'][1].config(text=optimum_node.penalty_ship2, **design_params)
@@ -374,9 +376,15 @@ class ManualGamePage(tk.Frame):
     def show_optimal_solution(self):
         self.optimum_nodes = self.app.graph.dijkstra(self.app.nodes[0].index)
         total = 0
+        prev_ship1_load = 0
+        prev_ship2_load = 0
         for i, col in enumerate(self.day_columns):
             total += self.optimum_nodes[i].daily_charge
-            col.show_optimum(self.optimum_nodes[i], total)
+            ship1_load = self.optimum_nodes[i].ship1 - prev_ship1_load
+            ship2_load = self.optimum_nodes[i].ship2 - prev_ship2_load
+            col.show_optimum(self.optimum_nodes[i], total, ship1_load, ship2_load)
+            prev_ship1_load = self.optimum_nodes[i].ship1
+            prev_ship2_load = self.optimum_nodes[i].ship2
 
     def start_over(self):
         for PageLayout in [ManualGamePage]:
