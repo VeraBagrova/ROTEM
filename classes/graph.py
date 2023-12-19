@@ -83,11 +83,16 @@ class Graph:
             if node.final:
                 dist_dict[i] = distance
         
-        optimal_final_ind = max(dist_dict, key=dist_dict.get)
+        optimal_final_ind = min(dist_dict, key=dist_dict.get)
         lst_ind = self.find_path(optimal_final_ind, parent, [optimal_final_ind])
         lst_nodes = [self.find_node_by_index(ind) for ind in lst_ind]
 
-        return lst_nodes
+        for node in lst_nodes:
+            print(node)
+            print(f'daily charges = {node.daily_charge}')
+            print()
+
+        return lst_nodes[1::]
 
     def printSolution(self, src, dist, parent):
         print("Vertex\tDistance\tPath")
@@ -155,5 +160,5 @@ class Graph:
                         # in min heap also
                         minHeap.decreaseKey(v, dist[v])
  
-        self.printSolution(src, dist, parent)
+        # self.printSolution(src, dist, parent)
         return self.optimalSolution(dist, parent)
