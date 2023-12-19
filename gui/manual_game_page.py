@@ -87,9 +87,9 @@ class GameGridColumn:
         self.entries['ship2_load'][0].config(state='normal', background=yellow_color, foreground='black')
 
     def block(self):
-        self.entries['day_order'][0].config(state='readonly', foreground='white')
-        self.entries['ship1_load'][0].config(state='readonly', foreground='white')
-        self.entries['ship2_load'][0].config(state='readonly', foreground='white')
+        self.entries['day_order'][0].config(state='readonly')
+        self.entries['ship1_load'][0].config(state='readonly')
+        self.entries['ship2_load'][0].config(state='readonly')
 
     def block_back(self):
         self.entries['day_order'][0].config(state='disabled')
@@ -104,25 +104,29 @@ class GameGridColumn:
             if key in ['day']:
                 continue
 
-            print(key)
             design = even_design_params_entry
             if i % 2 != 0:
                 design = odd_design_params_entry
-
-            if i == int(self.app.parameters['day_ship1_arrival'].final_value):
-                self.entries['ship1_mass'][0].insert(tk.END, string='0')
-                self.entries['ship1_mass'][0].config(**design)
-                continue
-
-            if i == int(self.app.parameters['day_ship2_arrival'].final_value):
-                self.entries['ship2_mass'][0].insert(tk.END, string='0')
-                self.entries['ship2_mass'][0].config(**design)
-                continue
 
             value[0].config(state='normal')
             value[0].delete(0, tk.END)
             value[0].insert(index=0, string="")
             value[0].config(**design)
+
+            ### оставляем нули в дни прибытия кораблей
+            if self.day_number == self.app.parameters['day_ship1_arrival'].final_value:
+                self.entries['ship1_mass'][0].config(state='normal')
+                self.entries['ship1_mass'][0].delete(0, tk.END)
+                self.entries['ship1_mass'][0].insert(tk.END, string='0')
+                self.entries['ship1_mass'][0].config(**even_design_params_entry)
+                continue
+
+            if self.day_number == self.app.parameters['day_ship2_arrival'].final_value:
+                self.entries['ship2_mass'][0].config(state='normal')
+                self.entries['ship2_mass'][0].delete(0, tk.END)
+                self.entries['ship2_mass'][0].insert(tk.END, string='0')
+                self.entries['ship2_mass'][0].config(**odd_design_params_entry)
+                continue
 
         self.node = None
 
@@ -353,7 +357,7 @@ class ManualGamePage(tk.Frame):
 
     def clean_day(self):
         ### если число заполненных равно номеру следующего дня
-        if len(self.app.nodes) == self.current_day + 1:
+        if (len(self.app.nodes) == self.current_day + 1) and (len(self.app.nodes) > 1):
             self.app.nodes.pop()
             self.day_columns[self.current_day].clean()
             self.day_columns[self.current_day].block_back()
