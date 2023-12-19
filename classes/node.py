@@ -3,7 +3,7 @@ class Node:
                  arrive1: bool, arrive2: bool,
                  ship1: int, ship2: int,
                  departed1: bool, departed2: bool,
-                 warehouse: int, order: int) -> object:
+                 warehouse: int, order: int):
         self.index = 0
         self.day = day
         self.arrive1 = arrive1
@@ -22,16 +22,14 @@ class Node:
         self.daily_charge = 0
         self.final = False
 
-
     def __eq__(self, other) -> bool:
-        if not isinstance(other, (Node)):
+        if not isinstance(other, Node):
             raise TypeError("Операнд справа должен иметь тип Node")
- 
+
         return (self.day == other.day) & (self.arrive1 == other.arrive1) & (self.arrive2 == other.arrive2) \
             & (self.ship1 == other.ship1) & (self.ship2 == other.ship2) & (self.departed1 == other.departed1) \
             & (self.departed2 == other.departed2) & (self.warehouse == other.warehouse) \
             & (self.order == other.order)
-    
 
     def __str__(self):
         st = "day=" + str(self.day) + "\narrive1=" + str(self.arrive1) + "\narrive2=" + str(self.arrive2) + \

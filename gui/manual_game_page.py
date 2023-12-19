@@ -146,23 +146,26 @@ class GameGridColumn:
         ship1_load = [0 if ship1_load == '' else int(ship1_load)][0]
         ship2_load = [0 if ship2_load == '' else int(ship2_load)][0]
 
-        departed1 = (ship1_load == int(self.app.parameters['max_ship1'].final_value))
-        departed2 = (ship2_load == int(self.app.parameters['max_ship2'].final_value))
+        print(self.app.parameters['max_ship1'].final_value)
+
+        departed1 = (previous_node.ship1 == int(self.app.parameters['ship1_mass'].final_value))
+        departed2 = (previous_node.ship2 == int(self.app.parameters['ship2_mass'].final_value))
 
         params = {
             "day": self.day_number,
             "arrive1": (self.app.parameters['day_ship1_arrival'].final_value < self.day_number),
             "arrive2": (self.app.parameters['day_ship2_arrival'].final_value < self.day_number),
-            "ship1": ship1_load,
-            "ship2": ship2_load,
+            "ship1": previous_node.ship1 + ship1_load,
+            "ship2": previous_node.ship2 + ship2_load,
             "departed1": departed1,
             "departed2": departed2,
-            "warehouse": previous_node.warehouse + day_order - ship1_load - ship2_load + ship1_load + ship2_load,
+            "warehouse": previous_node.warehouse + day_order - ship1_load - ship2_load,
             "order": day_order
         }
 
         node = Node(**params)
         checked_node = self.app.graph.node_exist(node)
+
         # либо она None, либо она уже заполнена
         if checked_node:
             # уже посчитанная нода
@@ -192,7 +195,7 @@ class GameGridColumn:
 
         if self.day_number > self.app.parameters['day_ship2_arrival'].final_value:
             self.entries['ship2_mass'][0].config(state='normal')
-            self.entries['ship2_mass'][0].insert(tk.END, string=str(self.node.ship1))
+            self.entries['ship2_mass'][0].insert(tk.END, string=str(self.node.ship2))
             self.entries['ship2_mass'][0].config(**odd_design_params_entry)
 
         self.entries['pen_ship1_unloading'][0].config(state='normal')
