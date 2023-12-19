@@ -41,7 +41,6 @@ class Graph:
                         weight = child.penalty_ship1 + child.penalty_ship2 + child.penalty_extraorder + child.storing_cost
                         # it's for debug
                         # print(f'Parent node\n{nd}\nChild node\n{child}\n')
-
                         newNode = [child.index, weight]
                         graph[nd.index].insert(0, newNode)
                         all_nodes.append(child)
@@ -63,13 +62,11 @@ class Graph:
             if node == full_node:
                 return full_node
         return None
-    
 
     def find_node_by_index(self, ind: int) -> Node:
         for node in self.all_nodes:
             if node.index == ind:
                 return node
-            
 
     def find_path(self, v, parent, lst_ind) -> list:
         if parent[v] == -1:
@@ -77,7 +74,6 @@ class Graph:
         
         lst_ind.append(parent[v])
         return self.find_path(parent[v], parent, lst_ind)
-    
 
     def optimalSolution(self, dist, parent):
         dist_dict = {}
@@ -93,7 +89,6 @@ class Graph:
 
         return lst_nodes
 
-    
     def printSolution(self, src, dist, parent):
         print("Vertex\tDistance\tPath")
         for i in range(len(dist)):
@@ -107,8 +102,7 @@ class Graph:
     # The main function that calculates distances 
     # of shortest paths from src to all vertices. 
     # It is a O(ELogV) function
-    def dijkstra(self, src: Node):
-
+    def dijkstra(self, src = 0):
         V = self.V  # Get the number of vertices in graph
         dist = [float('inf')] * V   # dist values used to pick minimum 
                     # weight edge in cut
