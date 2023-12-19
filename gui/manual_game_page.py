@@ -87,9 +87,9 @@ class GameGridColumn:
         self.entries['ship2_load'][0].config(state='normal', background=yellow_color, foreground='black')
 
     def block(self):
-        self.entries['day_order'][0].config(state='readonly')
-        self.entries['ship1_load'][0].config(state='readonly')
-        self.entries['ship2_load'][0].config(state='readonly')
+        self.entries['day_order'][0].config(state='readonly', foreground='white')
+        self.entries['ship1_load'][0].config(state='readonly', foreground='white')
+        self.entries['ship2_load'][0].config(state='readonly', foreground='white')
 
     def block_back(self):
         self.entries['day_order'][0].config(state='disabled')
@@ -352,7 +352,8 @@ class ManualGamePage(tk.Frame):
             if user_input_check:
                 self.day_columns[self.current_day].block()
                 self.current_day += 1
-                self.day_columns[self.current_day].unblock()
+                if self.current_day < self.n_days:
+                    self.day_columns[self.current_day].unblock()
 
         else:
             self.show_optimal_solution()
@@ -372,9 +373,10 @@ class ManualGamePage(tk.Frame):
 
     def show_optimal_solution(self):
         self.optimum_nodes = self.app.graph.dijkstra(self.app.nodes[0].index)
+        total = 0
         for i, col in enumerate(self.day_columns):
-            col.set_optimum(self.optimum_nodes[i])
-            col.show_optimum()
+            total += self.optimum_nodes[i].daily_charge
+            col.show_optimum(self.optimum_nodes[i], total)
 
     def start_over(self):
         for PageLayout in [ManualGamePage]:
