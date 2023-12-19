@@ -82,14 +82,19 @@ class GameGridColumn:
         self.entries['day'][0].config(disabledforeground=fg_color, disabledbackground=bg_color)
 
     def unblock(self):
-        self.entries['day_order'][0].config(state='normal', background=yellow_color)
-        self.entries['ship1_load'][0].config(state='normal', background=yellow_color)
-        self.entries['ship2_load'][0].config(state='normal', background=yellow_color)
+        self.entries['day_order'][0].config(state='normal', background=yellow_color, foreground='black')
+        self.entries['ship1_load'][0].config(state='normal', background=yellow_color, foreground='black')
+        self.entries['ship2_load'][0].config(state='normal', background=yellow_color, foreground='black')
 
     def block(self):
-        self.entries['day_order'][0].config(state='readonly', background=yellow_color)
-        self.entries['ship1_load'][0].config(state='readonly', background=yellow_color)
-        self.entries['ship2_load'][0].config(state='readonly', background=yellow_color)
+        self.entries['day_order'][0].config(state='readonly', foreground='white')
+        self.entries['ship1_load'][0].config(state='readonly', foreground='white')
+        self.entries['ship2_load'][0].config(state='readonly', foreground='white')
+
+    def block_back(self):
+        self.entries['day_order'][0].config(state='disabled')
+        self.entries['ship1_load'][0].config(state='disabled')
+        self.entries['ship2_load'][0].config(state='disabled')
 
     def clean(self):
         # очистка колонки
@@ -341,7 +346,7 @@ class ManualGamePage(tk.Frame):
         if len(self.app.nodes) == self.current_day + 1:
             self.app.nodes.pop()
             self.day_columns[self.current_day].clean()
-            self.day_columns[self.current_day].block()
+            self.day_columns[self.current_day].block_back()
             self.day_columns[self.current_day - 1].clean()
             self.day_columns[self.current_day - 1].unblock()
 
