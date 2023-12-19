@@ -104,6 +104,16 @@ class GameGridColumn:
             if i % 2 != 0:
                 design = odd_design_params_entry
 
+            if i == int(self.app.parameters['day_ship1_arrival'].final_value):
+                self.entries['ship1_mass'][0].insert(tk.END, string='0')
+                self.entries['ship1_mass'][0].config(**design)
+                continue
+
+            if i == int(self.app.parameters['day_ship2_arrival'].final_value):
+                self.entries['ship2_mass'][0].insert(tk.END, string='0')
+                self.entries['ship2_mass'][0].config(**design)
+                continue
+
             value[0].config(state='normal')
             value[0].delete(0, tk.END)
             value[0].insert(index=0, string="")
