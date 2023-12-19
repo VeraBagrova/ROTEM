@@ -95,8 +95,11 @@ class GameGridColumn:
         # очистка колонки
         for i, dict_item in enumerate(self.entries.items()):
             key, value = dict_item
-            if key not in ['day_charges', 'total_charges', 'day_order', 'ship1_load', 'ship2_load']:
+
+            if key in ['day']:
                 continue
+
+            print(key)
             design = even_design_params_entry
             if i % 2 != 0:
                 design = odd_design_params_entry
@@ -182,11 +185,11 @@ class GameGridColumn:
         self.entries['pen_ship2_unloading'][0].config(**even_design_params_entry)
 
         self.entries['pen_extraorder'][0].config(state='normal')
-        self.entries['pen_extraorder'][0].insert(tk.END, string=str(self.node.penalty_ship2))
+        self.entries['pen_extraorder'][0].insert(tk.END, string=str(self.node.penalty_extraorder))
         self.entries['pen_extraorder'][0].config(**odd_design_params_entry)
 
         self.entries['storing_cost'][0].config(state='normal')
-        self.entries['storing_cost'][0].insert(tk.END, string=str(self.node.penalty_ship2))
+        self.entries['storing_cost'][0].insert(tk.END, string=str(self.node.storing_cost))
         self.entries['storing_cost'][0].config(**even_design_params_entry)
 
         self.entries['day_charges'][0].config(state='normal')
@@ -334,16 +337,19 @@ class ManualGamePage(tk.Frame):
             self.end_or_repeat()
 
     def clean_day(self):
+        ### если число заполненных равно номеру следующего дня
         if len(self.app.nodes) == self.current_day + 1:
             self.app.nodes.pop()
+            self.day_columns[self.current_day].clean()
             self.day_columns[self.current_day].block()
             self.day_columns[self.current_day - 1].clean()
             self.day_columns[self.current_day - 1].unblock()
+
             print('cleaned the node', self.current_day + 1)
             self.current_day -= 1
 
     def show_optimal_solution(self):
-        self.optimum_nodes = self.app.graph.optimalSolution()
+        self.optimum_nodes = self.app.graph.dijkstra(self.app.nodes[0].index)
         for i, col in enumerate(self.day_columns):
             col.set_optimum(self.optimum_nodes[i])
             col.show_optimum()
