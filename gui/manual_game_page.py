@@ -231,9 +231,22 @@ class GameGridColumn:
         self.entries['ship1_load'][1].config(text=ship1_load, **design_params)
         self.entries['ship2_load'][1].config(text=ship2_load, **design_params)
 
-        self.entries['ship1_mass'][1].config(text=optimum_node.ship1, **design_params)
-        self.entries['ship2_mass'][1].config(text=optimum_node.ship2, **design_params)
+        if self.day_number >= self.app.parameters['day_ship1_arrival'].final_value:
+            self.entries['ship1_mass'][1].config(text=optimum_node.ship1, **design_params)
+        else:
+            self.entries['ship1_mass'][1].config(text='', **design_params)
+
+        if self.day_number >= self.app.parameters['day_ship2_arrival'].final_value:
+            self.entries['ship2_mass'][1].config(text=optimum_node.ship2, **design_params)
+        else:
+            self.entries['ship2_mass'][1].config(text='', **design_params)
+
+        # self.entries['ship1_mass'][1].config(text=optimum_node.ship1, **design_params)
+        # self.entries['ship2_mass'][1].config(text=optimum_node.ship2, **design_params)
         self.entries['day_order'][1].config(text=optimum_node.order, **design_params)
+
+        # self.entries['ship1_load'][1].config(text='', **design_params)
+        # self.entries['ship2_load'][1].config(text='', **design_params)
 
         self.entries['pen_ship1_unloading'][1].config(text=optimum_node.penalty_ship1, **design_params)
         self.entries['pen_ship2_unloading'][1].config(text=optimum_node.penalty_ship2, **design_params)
@@ -287,7 +300,7 @@ class ManualGamePage(tk.Frame):
         common_design = {"width": 20, "anchor": "w", "wraplength": 200, "justify": "left"}
         self.labels = [
             tk.Label(self, text="Day (Sunday red)", **even_design_params, **common_design),
-            tk.Label(self, text=f"Storing mass\n(at the end >= {params['storing_mass'].final_value})", **common_design,
+            tk.Label(self, text=f"Storing mass\n(at the end = {params['storing_mass'].final_value})", **common_design,
                      **odd_design_params),
             tk.Label(self, text=f"Ship1 mass\n(at the end = {params['ship1_mass'].final_value}) ", **even_design_params,
                      **common_design),
@@ -320,7 +333,6 @@ class ManualGamePage(tk.Frame):
 
         n_days = self.n_days
         n_params = self.n_rows
-        print(f'Дней {self.n_rows}, параметров {n_params}')
 
         for i in range(1, n_days + 1):
             column = GameGridColumn(day_number=i, page=self)
@@ -362,7 +374,7 @@ class ManualGamePage(tk.Frame):
             self.end_or_repeat()
 
     def clean_day(self):
-        ### если число заполненных равно номеру следующего дня
+        # если число заполненных равно номеру следующего дня
         if (len(self.app.nodes) == self.current_day + 1) and (len(self.app.nodes) > 1):
             self.app.nodes.pop()
             self.day_columns[self.current_day].clean()
@@ -379,6 +391,15 @@ class ManualGamePage(tk.Frame):
         prev_ship1_load = 0
         prev_ship2_load = 0
         for i, col in enumerate(self.day_columns):
+            # if i < self.app.parameters['day_ship1_arrival'].final_value:
+            #     self.entries['ship1_mass'][0].config(state='normal')
+            #     self.entries['ship1_mass'][0].insert(tk.END, string=str(self.node.ship1))
+            #     self.entries['ship1_mass'][0].config(**even_design_params_entry)
+            #
+            # if i < self.app.parameters['day_ship2_arrival'].final_value:
+            #     self.entries['ship2_mass'][0].config(state='normal')
+            #     self.entries['ship2_mass'][0].insert(tk.END, string=str(self.node.ship2))
+            #     self.entries['ship2_mass'][0].config(**odd_design_params_entry)
             total += self.optimum_nodes[i].daily_charge
             ship1_load = self.optimum_nodes[i].ship1 - prev_ship1_load
             ship2_load = self.optimum_nodes[i].ship2 - prev_ship2_load
@@ -391,6 +412,7 @@ class ManualGamePage(tk.Frame):
             frame = PageLayout(self.app.container, self.app)
             frame.grid(row=0, column=0, sticky='nsew')
             self.app.frames[PageLayout] = frame
+            self.app.nodes = [self.app.nodes[0]]
 
         self.app.show_frame(ManualGamePage)
 

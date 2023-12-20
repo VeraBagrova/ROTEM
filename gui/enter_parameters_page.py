@@ -121,7 +121,7 @@ class ParametersEntryPage(tk.Frame):
                 parameter.user_entry.insert(0, '3')
             elif parameter.name == 'storing_cost':
                 parameter.user_entry.insert(0, '2')
-            parameter.error_label = tk.Label(self, design_params, width=25, text="Ожидается ввод...", fg=yellow_color)
+            parameter.error_label = tk.Label(self, design_params, width=25, text="Enter your value...", fg=yellow_color)
             parameter.optimal_solution = tk.Label(self, text="")
 
             parameter.intro_text.grid(row=row_number_corrected, column=0, padx=1, pady=1)
