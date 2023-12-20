@@ -84,9 +84,9 @@ class StartPage(tk.Frame):
             column=0,
         )
 
-        # with open('gui/intro.txt', 'r') as file:
-        #     intro = file.read()
-        intro = 'HELLOO'
+        with open('intro.txt', 'r') as file:
+            intro = file.read()
+        # intro = 'HELLOO'
 
         intro_label = tk.Label(
             self,
