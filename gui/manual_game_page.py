@@ -87,9 +87,9 @@ class GameGridColumn:
         self.entries['ship2_load'][0].config(state='normal', background=yellow_color, foreground='black')
 
     def block(self):
-        self.entries['day_order'][0].config(state='readonly', foreground='white')
-        self.entries['ship1_load'][0].config(state='readonly', foreground='white')
-        self.entries['ship2_load'][0].config(state='readonly', foreground='white')
+        self.entries['day_order'][0].config(state='readonly', foreground='black')
+        self.entries['ship1_load'][0].config(state='readonly', foreground='black')
+        self.entries['ship2_load'][0].config(state='readonly', foreground='black')
 
     def block_back(self):
         self.entries['day_order'][0].config(state='disabled')
