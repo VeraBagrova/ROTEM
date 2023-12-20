@@ -48,44 +48,6 @@ class ParametersEntryPage(tk.Frame):
                 justify="left"
             )
             parameter.user_entry = tk.Entry(self, design_params, highlightthickness=0)
-            # if parameter.name == 'first_sunday':
-            #     parameter.user_entry.insert(0, '3')
-            # else:
-            #     parameter.user_entry.insert(0, '7')
-            # if parameter.name == 'first_sunday':
-            #     parameter.user_entry.insert(0, '3')
-            # elif parameter.name == 'max_day':
-            #     parameter.user_entry.insert(0, '3')
-            # elif parameter.name == 'day_ship1_arrival':
-            #     parameter.user_entry.insert(0, '1')
-            # elif parameter.name == 'day_ship2_arrival':
-            #     parameter.user_entry.insert(0, '1')
-            # elif parameter.name == 'warehouse':
-            #     parameter.user_entry.insert(0, '1')
-            # elif parameter.name == 'storing_mass':
-            #     parameter.user_entry.insert(0, '1')
-            # elif parameter.name == 'ship1_mass':
-            #     parameter.user_entry.insert(0, '1')
-            # elif parameter.name == 'ship2_mass':
-            #     parameter.user_entry.insert(0, '1')
-            # elif parameter.name == 'max_order':
-            #     parameter.user_entry.insert(0, '2')
-            # elif parameter.name == 'penalty_extraorder':
-            #     parameter.user_entry.insert(0, '2')
-            # elif parameter.name == 'min_ship1':
-            #     parameter.user_entry.insert(0, '1')
-            # elif parameter.name == 'max_ship1':
-            #     parameter.user_entry.insert(0, '2')
-            # elif parameter.name == 'min_ship2':
-            #     parameter.user_entry.insert(0, '1')
-            # elif parameter.name == 'max_ship2':
-            #     parameter.user_entry.insert(0, '2')
-            # elif parameter.name == 'penalty_ship1':
-            #     parameter.user_entry.insert(0, '2')
-            # elif parameter.name == 'penalty_ship2':
-            #     parameter.user_entry.insert(0, '2')
-            # elif parameter.name == 'storing_cost':
-            #     parameter.user_entry.insert(0, '2')
 
             if parameter.name == 'first_sunday':
                 parameter.user_entry.insert(0, '3')
