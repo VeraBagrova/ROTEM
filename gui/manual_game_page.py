@@ -241,12 +241,7 @@ class GameGridColumn:
         else:
             self.entries['ship2_mass'][1].config(text='', **design_params)
 
-        # self.entries['ship1_mass'][1].config(text=optimum_node.ship1, **design_params)
-        # self.entries['ship2_mass'][1].config(text=optimum_node.ship2, **design_params)
         self.entries['day_order'][1].config(text=optimum_node.order, **design_params)
-
-        # self.entries['ship1_load'][1].config(text='', **design_params)
-        # self.entries['ship2_load'][1].config(text='', **design_params)
 
         self.entries['pen_ship1_unloading'][1].config(text=optimum_node.penalty_ship1, **design_params)
         self.entries['pen_ship2_unloading'][1].config(text=optimum_node.penalty_ship2, **design_params)
@@ -391,15 +386,7 @@ class ManualGamePage(tk.Frame):
         prev_ship1_load = 0
         prev_ship2_load = 0
         for i, col in enumerate(self.day_columns):
-            # if i < self.app.parameters['day_ship1_arrival'].final_value:
-            #     self.entries['ship1_mass'][0].config(state='normal')
-            #     self.entries['ship1_mass'][0].insert(tk.END, string=str(self.node.ship1))
-            #     self.entries['ship1_mass'][0].config(**even_design_params_entry)
-            #
-            # if i < self.app.parameters['day_ship2_arrival'].final_value:
-            #     self.entries['ship2_mass'][0].config(state='normal')
-            #     self.entries['ship2_mass'][0].insert(tk.END, string=str(self.node.ship2))
-            #     self.entries['ship2_mass'][0].config(**odd_design_params_entry)
+
             total += self.optimum_nodes[i].daily_charge
             ship1_load = self.optimum_nodes[i].ship1 - prev_ship1_load
             ship2_load = self.optimum_nodes[i].ship2 - prev_ship2_load

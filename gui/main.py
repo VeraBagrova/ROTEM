@@ -1,9 +1,6 @@
 import tkinter as tk
-import sys
-sys.path.append('../../')
 
-from tkinter import ttk
-from typing import Tuple, List
+from typing import List
 from gui.enter_parameters_page import ParametersEntryPage
 from gui.utils import GameParameterStorage
 
@@ -16,6 +13,7 @@ height = 1500
 
 blue_color = 'blue3'
 yellow_color = 'yellow'
+
 
 class TkinterApp(tk.Tk):
 
@@ -84,9 +82,8 @@ class StartPage(tk.Frame):
             column=0,
         )
 
-        with open('intro.txt', 'r') as file:
+        with open('gui/intro.txt', 'r') as file:
             intro = file.read()
-        # intro = 'HELLOO'
 
         intro_label = tk.Label(
             self,
